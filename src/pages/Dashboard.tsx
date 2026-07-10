@@ -134,7 +134,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className={`bg-bg-surface rounded-xl border-l-[3px] ${stat.borderColor} shadow-sm px-4 py-3 hover:shadow-md transition-colors cursor-pointer hover:bg-bg-surface-hover`} onClick={() =>  void ('Filtered by KPI:', stat.label)}>
+          <div key={i} className={`bg-bg-surface rounded-xl border-l-[3px] ${stat.borderColor} shadow-sm px-4 py-3 hover:shadow-md transition-colors cursor-pointer hover:bg-bg-surface-hover`} onClick={() =>  {}}>
             <div className={`text-xl font-semibold ${stat.valueColor}`}>{stat.value}</div>
             <div className="text-[11px] text-text-tertiary uppercase tracking-wider mt-1">{stat.label}</div>
           </div>
@@ -145,11 +145,11 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-bg-surface rounded-xl shadow-sm p-4">
           <div className="text-xs font-medium text-text-primary mb-3">Status distribution</div>
-          <div className="flex items-center gap-2 mb-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  void ("Filtered by status")}>
+          <div className="flex items-center gap-2 mb-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  {}}>
             <div className="text-[10px] text-text-tertiary w-9">New</div>
             <div className="flex-1 h-2 rounded-full bg-brand-50"><div className="w-4/5 h-full rounded-full bg-brand-500"></div></div>
           </div>
-          <div className="flex items-center gap-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  void ("Filtered by status")}>
+          <div className="flex items-center gap-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  {}}>
             <div className="text-[10px] text-text-tertiary w-9">Open</div>
             <div className="flex-1 h-2 rounded-full bg-brand-50"><div className="w-[35%] h-full rounded-full bg-brand-300"></div></div>
           </div>
@@ -212,7 +212,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
               className="input-base w-full pl-9"
             />
           </div>
-          <div className="flex items-center gap-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  void ("Filtered by status")}>
+          <div className="flex items-center gap-2 cursor-pointer hover:bg-bg-surface-hover p-1 rounded transition-colors" onClick={() =>  {}}>
             <Button variant="outline" size="sm" icon={SlidersHorizontal} onClick={() => setIsFilterDrawerOpen(true)}>
               Filters
             </Button>
@@ -308,7 +308,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
 
         <div className="md:hidden flex flex-col gap-3 p-4 bg-bg-page">
           {sortedTickets.map((ticket, i) => (
-            <div key={i} className="bg-bg-surface border border-border-default rounded-lg p-4 shadow-sm flex flex-col gap-3 cursor-pointer" onClick={() =>  void ('Open ticket', ticket.id)}>
+            <div key={i} className="bg-bg-surface border border-border-default rounded-lg p-4 shadow-sm flex flex-col gap-3 cursor-pointer" onClick={() =>  {}}>
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-1">
                   <span className="text-[11px]"><CopyId id={ticket.id} type="ticket" /></span>
@@ -341,8 +341,8 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
       {isFilterDrawerOpen && (
         <FilterDrawer 
           onClose={() => setIsFilterDrawerOpen(false)}
-          onApply={(filters) =>  void ('Applied filters:', filters)}
-          onSaveAndSearch={(filters) =>  void ('Saved and searched filters:', filters)}
+          onApply={(filters) =>  {}}
+          onSaveAndSearch={(filters) =>  {}}
         />
       )}
 
@@ -385,7 +385,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
             <div className="p-4 border-t border-border-default bg-bg-surface rounded-b-xl flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsBulkAssignOpen(false)}>Cancel</Button>
               <Button variant="primary" disabled={!bulkAssignAgent} onClick={() => {
-                 void ('Bulk assigned to:', bulkAssignAgent, 'Comment:', bulkAssignComment, 'Tickets:', selectedTickets);
+                 {};
                 setIsBulkAssignOpen(false);
                 setSelectedTickets([]);
                 setBulkAssignAgent('');
