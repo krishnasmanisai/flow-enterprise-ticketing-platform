@@ -11,6 +11,7 @@ import { Badge } from '../components/ui/Badge';
 import { SingleSearchDropdown } from '../components/ui/SingleSearchDropdown';
 import { CopyId } from '../components/ui/CopyId';
 import { RichTextEditor } from '../components/ui/RichTextEditor';
+import { LogTimeModal, TimeLogEntry } from '../components/ticket/LogTimeModal';
 
 // Mock modals
 const TicketHistoryModal = ({ onClose }: any) => null;
@@ -72,6 +73,24 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
   const [isChangeProjectModalOpen, setIsChangeProjectModalOpen] = useState(false);
   const [isLinkTicketModalOpen, setIsLinkTicketModalOpen] = useState(false);
   const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
+  const [isLogTimeModalOpen, setIsLogTimeModalOpen] = useState(false);
+  const [timeLogEntries, setTimeLogEntries] = useState<TimeLogEntry[]>([]);
+  const [showToast, setShowToast] = useState(false);
+
+  const totalLoggedMinutes = timeLogEntries.reduce((acc, entry) => acc + entry.hours * 60 + entry.minutes, 0);
+  const totalLoggedFormatted = `${Math.floor(totalLoggedMinutes / 60)}h ${totalLoggedMinutes % 60}m`;
+  
+  const handleAddLogEntry = (entry: Omit<TimeLogEntry, 'id' | 'date' | 'time'>) => {
+    const newEntry: TimeLogEntry = {
+      ...entry,
+      id: Math.random().toString(),
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      time: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    };
+    setTimeLogEntries(prev => [newEntry, ...prev]);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
 
   const messagesEmail = [
@@ -117,6 +136,12 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
                   <span>Created: Oct 24, 08:00 AM</span>
                   <span>•</span>
                   <span>Age: 2h 45m</span>
+                  {totalLoggedMinutes > 0 && (
+                    <>
+                      <span>•</span>
+                      <span className="font-bold text-brand-600">Logged: {totalLoggedFormatted}</span>
+                    </>
+                  )}
                 </div>
               </div>
               <h1 className="text-xl font-bold text-text-primary leading-tight mt-0.5">{originalRequestSubject}</h1>
@@ -124,6 +149,7 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <Button variant="secondary" size="sm" icon={Clock} onClick={() => setIsLogTimeModalOpen(true)} className="h-8 font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 border-brand-200">Log Time</Button>
             <Button variant="outline" size="sm" icon={MoreHorizontal} className="h-8 font-semibold">Actions</Button>
           </div>
         </div>
@@ -611,6 +637,27 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
                         </tr>
                       </thead>
                       <tbody className="text-[13px] text-text-primary font-medium">
+                        {timeLogEntries.map((entry) => (
+                          <tr key={entry.id} className="border-b border-border-subtle hover:bg-bg-surface-hover transition-colors">
+                            <td className="py-4 px-4 font-bold text-text-primary align-top">{entry.user}</td>
+                            <td className="py-4 px-4 align-top">
+                              <div className="font-bold text-text-primary mb-1">Logged Time</div>
+                              <div className="text-[12px] text-text-secondary flex flex-col gap-0.5">
+                                 <div><span className="text-text-muted">Duration:</span> <span className="font-mono">{entry.hours}h {entry.minutes}m</span></div>
+                                 {entry.comment && (
+                                   <div className="mt-1">
+                                      <span className="text-text-muted">Work Note:</span>
+                                      <div className="mt-0.5 bg-bg-page border border-border-default p-2 rounded prose prose-sm max-w-none text-text-secondary text-[12px]" dangerouslySetInnerHTML={{__html: entry.comment}} />
+                                   </div>
+                                 )}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 align-top text-text-secondary font-mono text-[12px]">
+                              <div><span className="text-text-muted">Date:</span> {entry.date}</div>
+                              <div><span className="text-text-muted">Time:</span> {entry.time}</div>
+                            </td>
+                          </tr>
+                        ))}
                         <tr className="border-b border-border-subtle hover:bg-bg-surface-hover transition-colors">
                           <td className="py-4 px-4 font-bold text-text-primary align-top">Sankar Das</td>
                           <td className="py-4 px-4 align-top">
@@ -679,6 +726,26 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
       {isChangeProjectModalOpen && <ChangeProjectModal onClose={() => setIsChangeProjectModalOpen(false)} currentProject="Customer Support" />}
       {isLinkTicketModalOpen && <LinkTicketModal onClose={() => setIsLinkTicketModalOpen(false)} />}
       {isReassignModalOpen && <ReassignModal onClose={() => setIsReassignModalOpen(false)} currentAssignee={assignee} />}
+      {isLogTimeModalOpen && (
+        <LogTimeModal 
+          onClose={() => setIsLogTimeModalOpen(false)} 
+          onAddEntry={handleAddLogEntry} 
+          entries={timeLogEntries} 
+        />
+      )}
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-4 right-4 bg-bg-surface border border-border-default shadow-lg rounded-lg p-4 flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-8 h-8 rounded-full bg-success-bg text-success-text flex items-center justify-center">
+            <CheckCircle2 size={16} />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-text-primary">Time Logged</h4>
+            <p className="text-xs text-text-secondary">Your time entry has been successfully recorded.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

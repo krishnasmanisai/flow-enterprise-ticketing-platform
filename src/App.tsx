@@ -23,6 +23,7 @@ import { CreateTicketFlow } from './pages/CreateTicketFlow';
 import Dashboard from './pages/Dashboard';
 import TeamManagement from './pages/TeamManagement';
 import InternalUsers from './pages/InternalUsers';
+import ProjectConfiguration from './pages/ProjectConfiguration';
 
 function AppLayout() {
   const location = useLocation();
@@ -68,6 +69,7 @@ function AppLayout() {
             <Route path="/reports" element={<Reports onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/client_configuration" element={<ClientConfiguration onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/client_details" element={<ClientDetails onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/project_configuration" element={<ProjectConfiguration onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/workflows" element={<Workflows onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/edit_workflow" element={<EditWorkflow onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/team_management" element={<TeamManagement onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />

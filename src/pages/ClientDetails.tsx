@@ -1,148 +1,171 @@
 import { useState } from 'react';
-import { ArrowLeft, ChevronDown, Check, Settings, Briefcase, Plus, Save, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Check, Settings, Briefcase, Plus, Save, Clock, AlertTriangle, ChevronRight, Search } from 'lucide-react';
 import { Page } from '../types';
 import { Button } from '../components/ui/Button';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
-
-// Mock EditConfigurationModal
-import { EditConfigurationModal } from '../components/EditConfigurationModal';
 
 export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page) => void }) {
   const [activeTab, setActiveTab] = useState<'config' | 'sla'>('config');
   const [activeProject, setActiveProject] = useState('Project Alpha');
   const [activeRequestType, setActiveRequestType] = useState('Incidents');
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+  
   const requestTypes = [
     'Incidents', 'Service Requests', 'Access Requests', 'Bug Reports', 'Feature Requests'
   ];
 
+  const projects = ['Project Alpha', 'Project Beta', 'Project Gamma'];
+
   return (
     <div className="flex flex-col h-full w-full bg-bg-page">
-      <div className="flex flex-1 overflow-hidden max-w-[1600px] mx-auto w-full">
+      {/* Top Header */}
+      <header className="bg-bg-surface border-b border-border-default px-6 py-4 flex items-center gap-4 shrink-0 shadow-sm sticky top-0 z-20">
+        <button onClick={() => onNavigate('client_configuration')} className="text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center p-1.5 -ml-1.5 rounded-md hover:bg-bg-page">
+          <ArrowLeft size={18} />
+        </button>
+        <div>
+          <h1 className="text-xl font-bold text-text-primary tracking-tight leading-none mb-1">Global Tech Solutions</h1>
+          <p className="text-xs text-text-secondary">Client ID: #CL-8924 • Enterprise Plan</p>
+        </div>
+      </header>
+      
+      <div className="flex flex-1 overflow-hidden w-full">
         {/* Left Project Sidebar */}
-        <div className="w-[280px] bg-bg-surface border-r border-border-default flex flex-col shrink-0">
+        <div className="w-[280px] bg-bg-surface border-r border-border-default flex flex-col shrink-0 z-10">
           <div className="p-4 border-b border-border-default">
-            <button onClick={() => onNavigate('client_configuration')} className="flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Back to Clients
-            </button>
+            <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest mb-3">Projects</h3>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <input 
+                type="text" 
+                placeholder="Search projects..." 
+                className="w-full pl-9 pr-3 py-2 bg-bg-page border border-border-default rounded-md text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
+              />
+            </div>
           </div>
           
-          <div className="p-5 pb-3">
-            <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-widest flex items-center justify-between">
-              Projects
-              <button className="p-1 hover:bg-bg-page rounded text-text-muted hover:text-text-primary transition-colors">
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </h3>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto px-3 space-y-1">
-            {['Project Alpha', 'Project Beta (Legacy)', 'Internal IT Ops'].map(proj => (
+          <div className="flex-1 overflow-y-auto p-3 space-y-1">
+            {projects.map((project) => (
               <button
-                key={proj}
-                onClick={() => setActiveProject(proj)}
-                className={`w-full text-left px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors flex items-center justify-between group ${
-                  activeProject === proj
-                    ? 'bg-bg-page text-text-primary shadow-sm border border-border-default'
+                key={project}
+                onClick={() => setActiveProject(project)}
+                className={`w-full text-left px-3 py-2.5 rounded-md text-sm font-medium transition-colors flex items-center gap-3 ${
+                  activeProject === project 
+                    ? 'bg-brand-50 text-brand-700' 
                     : 'text-text-secondary hover:bg-bg-surface-hover hover:text-text-primary'
                 }`}
               >
-                <div className="flex items-center gap-2 truncate">
-                  <Briefcase className={`w-4 h-4 shrink-0 ${activeProject === proj ? 'text-brand-500' : 'text-text-muted group-hover:text-text-primary'}`} />
-                  <span className="truncate">{proj}</span>
-                </div>
-                {activeProject === proj && (
-                  <Check className="w-4 h-4 text-brand-500 shrink-0 ml-2" />
-                )}
+                <div className={`w-2 h-2 rounded-full ${activeProject === project ? 'bg-brand-500' : 'bg-border-strong'}`} />
+                {project}
               </button>
             ))}
+          </div>
+          
+          <div className="p-4 border-t border-border-default">
+            <Button variant="outline" className="w-full justify-center" icon={Plus}>
+              New Project
+            </Button>
           </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-bg-page">
-          {/* Header Tabs */}
-          <div className="bg-bg-surface border-b border-border-default px-8 pt-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded bg-bg-page border border-border-default flex items-center justify-center shrink-0 shadow-sm">
-                <Briefcase className="w-5 h-5 text-text-muted" />
-              </div>
-              <h1 className="text-xl font-semibold text-text-primary tracking-tight">{activeProject}</h1>
+        <div className="flex-1 flex flex-col h-full min-w-0 bg-bg-page overflow-y-auto">
+          {/* Tabs */}
+          <div className="px-8 pt-8 pb-4 border-b border-border-default bg-bg-surface sticky top-0 z-10">
+            <div className="flex items-center justify-between">
+               <div>
+                  <h2 className="text-2xl font-bold text-text-primary tracking-tight">{activeProject}</h2>
+                  <p className="text-sm text-text-secondary mt-1">Manage configuration and SLA settings for this project</p>
+               </div>
             </div>
             
-            <div className="flex items-center gap-6">
+            <div className="flex gap-6 mt-6">
               <button
                 onClick={() => setActiveTab('config')}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'config' 
-                    ? 'border-brand-500 text-text-primary' 
-                    : 'border-transparent text-text-secondary hover:text-text-primary'
+                className={`pb-3 text-sm font-semibold transition-colors border-b-2 ${
+                  activeTab === 'config' ? 'border-brand-500 text-brand-600' : 'border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >
-                Configuration
+                Configuration Overview
               </button>
               <button
                 onClick={() => setActiveTab('sla')}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'sla' 
-                    ? 'border-brand-500 text-text-primary' 
-                    : 'border-transparent text-text-secondary hover:text-text-primary'
+                className={`pb-3 text-sm font-semibold transition-colors border-b-2 ${
+                  activeTab === 'sla' ? 'border-brand-500 text-brand-600' : 'border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >
                 SLA Settings
               </button>
             </div>
           </div>
-
-          <div className="flex-1 overflow-y-auto p-8">
+          
+          <div className="p-8 max-w-[1200px]">
             {activeTab === 'config' && (
-              <div className="max-w-4xl space-y-8">
-                <div>
-                  <h2 className="text-lg font-semibold text-text-primary mb-1 tracking-tight">Configuration - {activeProject}</h2>
-                  <p className="text-sm text-text-secondary mb-6">Manage global settings for this specific project</p>
-                  
-                  <div className="card-base p-5 flex items-center justify-between border-border-default bg-bg-surface">
+              <div className="space-y-8 animate-in fade-in duration-300">
+                {/* Status Card */}
+                <div className="card-base border-border-default overflow-hidden bg-bg-surface">
+                  <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <h3 className="font-semibold text-sm text-text-primary mb-0.5">Project Status</h3>
-                      <p className="text-xs text-text-secondary">Project is currently inactive and not processing tickets</p>
+                      <h3 className="text-base font-semibold text-text-primary mb-1">Project Status</h3>
+                      <p className="text-sm text-text-secondary">Project is currently active and processing tickets.</p>
                     </div>
-                    {/* Fake toggle switch */}
-                    <div className="w-11 h-6 bg-bg-surface-alt border border-border-default rounded-full relative cursor-pointer opacity-80">
-                      <div className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-bg-surface rounded-full shadow-sm"></div>
-                    </div>
+                    {/* Toggle Switch */}
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" defaultChecked />
+                      <div className="w-11 h-6 bg-border-strong peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success-text"></div>
+                      <span className="ml-3 text-sm font-semibold text-text-primary">Active</span>
+                    </label>
                   </div>
                 </div>
 
                 {/* Configuration Summary */}
                 <div>
-                  <div className="flex items-center justify-between mb-4 mt-8">
+                  <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h2 className="text-lg font-semibold text-text-primary tracking-tight">Configuration Summary</h2>
-                      <p className="text-xs text-text-secondary mt-0.5">Last updated: Jul 2, 2026</p>
+                      <h3 className="text-lg font-semibold text-text-primary tracking-tight">Configuration Summary</h3>
+                      <p className="text-xs text-text-secondary mt-1">Review the configured modules for this project. Last updated: Jul 2, 2026</p>
                     </div>
-                    <Button variant="outline" size="sm" icon={Settings} onClick={() => setIsEditModalOpen(true)}>
+                    <Button variant="primary" size="sm" icon={Settings} onClick={() => onNavigate('project_configuration')}>
                       Edit Configuration
                     </Button>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="card-base p-6 border-border-default bg-bg-surface">
-                      <h4 className="text-xs font-medium text-text-secondary mb-4 uppercase tracking-wider">Business Units</h4>
-                      <div className="text-4xl font-semibold text-text-primary tracking-tight mb-2">2</div>
-                      <p className="text-[11px] font-mono text-text-muted">Units configured</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="card-base p-6 border-border-default bg-bg-surface flex flex-col justify-between hover:border-brand-300 transition-colors">
+                      <div>
+                        <h4 className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-4">Business Units</h4>
+                        <div className="text-4xl font-bold text-text-primary tracking-tight mb-2">2</div>
+                      </div>
+                      <div className="pt-4 border-t border-border-default mt-4 flex items-center justify-between">
+                         <span className="text-[11px] font-medium text-text-muted bg-bg-page px-2 py-1 border border-border-default rounded shadow-sm">Technology</span>
+                         <span className="text-[11px] font-medium text-text-muted bg-bg-page px-2 py-1 border border-border-default rounded shadow-sm">Operations</span>
+                      </div>
                     </div>
                     
-                    <div className="card-base p-6 border-border-default bg-bg-surface">
-                      <h4 className="text-xs font-medium text-text-secondary mb-4 uppercase tracking-wider">Channels</h4>
-                      <div className="text-4xl font-semibold text-text-primary tracking-tight mb-2">3</div>
-                      <p className="text-[11px] font-mono text-text-muted truncate" title="email support, live chat, customer portal">email support, live chat...</p>
+                    <div className="card-base p-6 border-border-default bg-bg-surface flex flex-col justify-between hover:border-brand-300 transition-colors">
+                      <div>
+                        <h4 className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-4">Channels</h4>
+                        <div className="text-4xl font-bold text-text-primary tracking-tight mb-2">3</div>
+                      </div>
+                      <div className="pt-4 border-t border-border-default mt-4 flex items-center gap-2 overflow-hidden">
+                         <span className="text-[11px] font-medium text-text-muted bg-bg-page px-2 py-1 border border-border-default rounded shadow-sm whitespace-nowrap">Email</span>
+                         <span className="text-[11px] font-medium text-text-muted bg-bg-page px-2 py-1 border border-border-default rounded shadow-sm whitespace-nowrap">Chat</span>
+                         <span className="text-[11px] font-medium text-text-muted bg-bg-page px-2 py-1 border border-border-default rounded shadow-sm whitespace-nowrap">Portal</span>
+                      </div>
                     </div>
 
-                    <div className="card-base p-6 border-border-default bg-bg-surface">
-                      <h4 className="text-xs font-medium text-text-secondary mb-4 uppercase tracking-wider">Role Assignments</h4>
-                      <div className="text-4xl font-semibold text-text-primary tracking-tight mb-2">6</div>
-                      <p className="text-[11px] font-mono text-text-muted">Active assignments</p>
+                    <div className="card-base p-6 border-border-default bg-bg-surface flex flex-col justify-between hover:border-brand-300 transition-colors">
+                      <div>
+                        <h4 className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-4">Role Assignments</h4>
+                        <div className="text-4xl font-bold text-text-primary tracking-tight mb-2">6</div>
+                      </div>
+                      <div className="pt-4 border-t border-border-default mt-4 flex items-center justify-between">
+                         <div className="flex -space-x-2">
+                            {[1, 2, 3, 4].map(i => (
+                               <div key={i} className="w-6 h-6 rounded-full bg-brand-100 border-2 border-bg-surface flex items-center justify-center text-[9px] font-bold text-brand-700">U{i}</div>
+                            ))}
+                         </div>
+                         <span className="text-xs font-semibold text-brand-600 cursor-pointer hover:text-brand-800 transition-colors">View All</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -150,17 +173,19 @@ export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page)
             )}
 
             {activeTab === 'sla' && (
-              <div className="max-w-5xl h-full flex flex-col">
-                <h2 className="text-lg font-semibold text-text-primary mb-1 tracking-tight">SLA Settings - {activeProject}</h2>
-                <p className="text-sm text-text-secondary mb-6">Configure response and resolution time targets by priority</p>
+              <div className="h-full flex flex-col animate-in fade-in duration-300">
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-text-primary tracking-tight">SLA Targets</h3>
+                  <p className="text-sm text-text-secondary mt-1">Configure response and resolution time targets by request type.</p>
+                </div>
                 
-                <div className="card-base flex-1 flex overflow-hidden border-border-default bg-bg-surface min-h-[500px]">
+                <div className="card-base flex flex-col md:flex-row overflow-hidden border-border-default bg-bg-surface min-h-[500px]">
                   {/* SLA Left Pane */}
-                  <div className="w-[240px] border-r border-border-default shrink-0 flex flex-col bg-bg-page">
+                  <div className="w-full md:w-[260px] border-b md:border-b-0 md:border-r border-border-default shrink-0 flex flex-col bg-bg-page">
                     <div className="p-4 border-b border-border-default">
-                      <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-widest">Request Type</h3>
+                      <h4 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Request Type</h4>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-2.5 space-y-1">
+                    <div className="flex-1 overflow-y-auto p-3 space-y-1">
                       {requestTypes.map((type) => (
                         <button
                           key={type}
@@ -179,29 +204,32 @@ export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page)
                   </div>
                   
                   {/* SLA Right Pane */}
-                  <div className="flex-1 p-8 flex flex-col relative">
-                    <div className="flex justify-between items-start mb-8">
-                      <div className="px-3 py-1 bg-bg-page border border-border-default rounded-md text-[11px] font-mono font-medium text-text-secondary shadow-sm">
-                        {activeRequestType}
-                      </div>
-                      {/* Fake active toggle */}
-                      <div className="w-11 h-6 bg-success-bg border border-success-text/20 rounded-full relative cursor-pointer">
-                        <div className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-success-text rounded-full shadow-sm"></div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mb-8">
-                      <Clock className="w-5 h-5 text-text-muted" />
-                      <h2 className="text-lg font-semibold text-text-primary tracking-tight">SLA Targets</h2>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-8 max-w-2xl">
+                  <div className="flex-1 p-8 flex flex-col bg-bg-surface">
+                    <div className="flex justify-between items-start mb-8 pb-6 border-b border-border-default">
                       <div>
-                        <label className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary mb-2">
-                          <AlertTriangle className="w-3.5 h-3.5 text-text-muted" /> FIRST RESPONSE TIME
-                        </label>
-                        <div className="flex gap-2">
-                          <input type="text" defaultValue="3" className="input-base w-20 text-center font-mono" />
+                        <h4 className="text-lg font-bold text-text-primary">{activeRequestType}</h4>
+                        <p className="text-xs text-text-secondary mt-1">Define SLA targets specifically for {activeRequestType.toLowerCase()}.</p>
+                      </div>
+                      
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" defaultChecked />
+                        <div className="w-11 h-6 bg-border-strong peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success-text"></div>
+                        <span className="ml-3 text-sm font-semibold text-text-primary">Enabled</span>
+                      </label>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-3xl">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center shrink-0">
+                             <Clock className="w-4 h-4 text-brand-600" />
+                          </div>
+                          <h5 className="text-sm font-semibold text-text-primary uppercase tracking-wider">First Response Time</h5>
+                        </div>
+                        <p className="text-xs text-text-secondary pl-10 -mt-2">Target time to send the first reply to the customer.</p>
+                        
+                        <div className="flex gap-3 pl-10 pt-2">
+                          <input type="number" defaultValue={3} className="input-base w-24 text-center font-mono text-lg" />
                           <div className="flex-1">
                             <SearchableSelect 
                               value="Hours"
@@ -215,12 +243,18 @@ export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page)
                           </div>
                         </div>
                       </div>
-                      <div>
-                        <label className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary mb-2">
-                          <Clock className="w-3.5 h-3.5 text-text-muted" /> RESOLUTION TIME
-                        </label>
-                        <div className="flex gap-2">
-                          <input type="text" defaultValue="24" className="input-base w-20 text-center font-mono" />
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center shrink-0">
+                             <AlertTriangle className="w-4 h-4 text-brand-600" />
+                          </div>
+                          <h5 className="text-sm font-semibold text-text-primary uppercase tracking-wider">Resolution Time</h5>
+                        </div>
+                        <p className="text-xs text-text-secondary pl-10 -mt-2">Target time to fully resolve and close the ticket.</p>
+                        
+                        <div className="flex gap-3 pl-10 pt-2">
+                          <input type="number" defaultValue={24} className="input-base w-24 text-center font-mono text-lg" />
                           <div className="flex-1">
                             <SearchableSelect 
                               value="Hours"
@@ -236,9 +270,9 @@ export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page)
                       </div>
                     </div>
                     
-                    <div className="absolute bottom-8 right-8">
+                    <div className="mt-auto pt-8 flex justify-end border-t border-border-default">
                       <Button variant="primary" icon={Save}>
-                        Save SLA Settings
+                        Save {activeRequestType} SLA
                       </Button>
                     </div>
                   </div>
@@ -248,10 +282,6 @@ export default function ClientDetails({ onNavigate }: { onNavigate: (page: Page)
           </div>
         </div>
       </div>
-            
-      {isEditModalOpen && (
-        <EditConfigurationModal onClose={() => setIsEditModalOpen(false)} />
-      )}
     </div>
   );
 }
