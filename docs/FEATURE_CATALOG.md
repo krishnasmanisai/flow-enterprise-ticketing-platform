@@ -1,31 +1,44 @@
 # Feature Catalog
 
-## 1. Dashboard
-- **Purpose:** Provide a centralized overview of system health and metrics.
-- **Description:** Displays ticket counts, task priorities, and SLA statuses filtered by a global date range.
-- **User Roles:** Admin, Agent.
-- **Status:** Implemented.
+A comprehensive inventory of all modules and features within Flow Enterprise Support.
 
-## 2. Ticket Explorer
-- **Purpose:** Browse and manage all tickets.
-- **Description:** A robust data table with sorting, pagination, and multi-select filtering.
-- **User Roles:** Admin, Agent.
-- **Status:** Implemented.
+## 1. Authentication Module
+- **Purpose:** Secure access to the platform.
+- **Description:** Includes Login, Forgot Password, and Reset Password flows.
+- **User Roles:** All.
+- **Current Status:** UI Implemented.
+- **Dependencies:** None.
+- **Future Enhancements:** SSO Integration (SAML/OAuth).
 
-## 3. Ticket Details
-- **Purpose:** Deep dive into a specific ticket's lifecycle.
-- **Description:** Shows ticket metadata, conversation history, internal notes, and linked tasks.
+## 2. Dashboard
+- **Purpose:** Centralized operational overview.
+- **Description:** High-level metrics, SLA breach warnings, and ticket volume trends. Filtered globally by Date Range.
+- **User Roles:** Admin, Agent.
+- **Current Status:** Implemented.
+- **Dependencies:** Ticket Data, Task Data.
+- **Future Enhancements:** Customizable widget layouts.
+
+## 3. Ticket Explorer
+- **Purpose:** Browse and triage support tickets.
+- **Description:** Advanced data table featuring multi-column sorting, pagination, and multi-select filtering.
+- **User Roles:** Admin, Agent.
+- **Current Status:** Implemented.
+- **Future Enhancements:** Saved filter presets.
+
+## 4. Ticket Details & Workspace
+- **Purpose:** Deep dive into a specific ticket.
+- **Description:** Dual-pane layout showing ticket metadata, linked tasks, internal notes, and public replies.
 - **User Roles:** Admin, Agent, Client.
-- **Status:** Implemented.
+- **Current Status:** Implemented.
 
-## 4. Tasks Management
-- **Purpose:** Track internal and project-specific tasks.
-- **Description:** List view of tasks with assignees, priorities, and linked tickets.
+## 5. Task Management
+- **Purpose:** Track operational and ticket-linked tasks.
+- **Description:** List view managing task status, priority, and assignees.
 - **User Roles:** Admin, Agent.
-- **Status:** Implemented.
+- **Current Status:** Implemented.
 
-## 5. Internal Users
-- **Purpose:** Manage system access.
-- **Description:** Add, edit, and deactivate internal support staff.
+## 6. Internal Users Management
+- **Purpose:** Administrate platform access.
+- **Description:** Add, edit, and deactivate internal support staff, assigning roles and teams.
 - **User Roles:** Admin.
-- **Status:** Implemented.
+- **Current Status:** Implemented.

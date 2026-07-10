@@ -38,5 +38,22 @@
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.3"
-  }
+  },
+  "description": "Flow Enterprise Support - A Next-Generation IT Support & Workspace Platform",
+  "author": "Flow Enterprise Support Engineering Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flow-enterprise/flow-enterprise-support.git"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "enterprise",
+    "helpdesk",
+    "ticketing",
+    "saas",
+    "vite",
+    "tailwindcss"
+  ]
 }

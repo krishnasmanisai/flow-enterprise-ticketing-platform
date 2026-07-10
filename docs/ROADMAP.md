@@ -1,24 +1,30 @@
-# Roadmap
+# Product Roadmap
 
 ## Completed Features
-- [x] Basic Routing Setup
-- [x] Authentication Pages (Login, Reset Password)
-- [x] Dashboard Layout and Metrics
-- [x] Ticket Explorer and Details Page
-- [x] Internal User Management
-- [x] Date Range Dropdown Integration
+- [x] Initial React Application Setup
+- [x] Tailwind CSS Design System Integration
+- [x] Routing & Authentication UI (Login, Reset Password)
+- [x] Dashboard Analytics Layout
+- [x] Ticket Explorer with Complex Filtering
+- [x] Ticket Details & Conversation Timeline
+- [x] Task Management Interface
+- [x] Internal User Management UI
+- [x] Global Date Range Dropdown Integration
+- [x] Enterprise Documentation Suite
 
 ## In Progress
-- [ ] Enterprise Documentation Setup
-- [ ] API Integration and Data Fetching
-- [ ] Role-Based Access Control (RBAC) Enforcement
+- [ ] API Integration layer (Axios/Fetch wrappers)
+- [ ] Role-Based Access Control (RBAC) Enforcement logic
+- [ ] Real-time WebSocket connections for ticket updates
 
 ## Planned
-- [ ] Dynamic Form Engine implementation
-- [ ] Conversation Engine for Ticket comments
-- [ ] Advanced Report Generation
+- [ ] Full Dynamic Form Engine Integration for Custom Fields
+- [ ] Email Integration Renderer (parsing raw email threads)
+- [ ] Advanced Report Generation & Export (CSV/PDF)
+- [ ] Client Configuration Portal
 
 ## Future Ideas
-- [ ] AI-Powered Ticket Summarization
-- [ ] SLA Breach Prediction
-- [ ] Multi-language Support
+- [ ] AI-Powered Ticket Summarization (GenAI integration)
+- [ ] SLA Breach Prediction heuristics
+- [ ] Multi-language / i18n Support
+- [ ] Native Mobile Application

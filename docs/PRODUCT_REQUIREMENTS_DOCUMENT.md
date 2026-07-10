@@ -1,49 +1,69 @@
 # Product Requirements Document (PRD)
 
-## Goals
-To provide a scalable, multi-tenant enterprise support and task management system that allows organizations to seamlessly track tickets, manage workflows, and collaborate on tasks.
+## 1. Executive Summary
+Flow Enterprise Support is a B2B SaaS platform designed to streamline IT support, client service, and internal task management. It replaces fragmented legacy systems with a unified, consumer-grade workspace.
 
-## Requirements
-- A robust dashboard for an overview of tickets and tasks.
-- Advanced ticket management with filtering, categorization, and tracking.
-- Role-based permissions for Internal Users vs. Clients.
-- Workflow configuration engine.
-- Dynamic report generation.
-- Responsive design tailored for web, tablet, and mobile.
+## 2. Goals & Objectives
+- **Operational Efficiency:** Reduce MTTR by 20% through a unified agent workspace.
+- **Visibility:** Provide managers with real-time SLA metrics.
+- **Scalability:** Support multi-tenant environments with dynamic field configurations.
 
-## Modules
-- **Authentication:** Login, Forgot Password, Reset Password.
-- **Dashboard:** High-level metrics, ticket counts, task summaries, date range filtering.
-- **Tickets:** Ticket Explorer, My Tickets, Created By Me, Ticket Details, Create Ticket Flow.
-- **Tasks:** Task listing, filtering, and assignment.
-- **Settings & Management:** Internal Users, Team Management, Workflows.
-- **Reporting:** Analytics and data export.
+---
 
-## Workflows
-- **Ticket Lifecycle:** Open -> In Progress -> Waiting for Support -> Resolved -> Closed.
-- **Task Assignment:** Creation -> Assignment -> Execution -> Review -> Done.
-- **User Onboarding:** Admin invites -> User registers/logs in -> Role assignment.
+## 3. Core Logic: Ticket Lifecycle
 
-## Permissions
-- **Admin:** Full access to all modules, configurations, and user management.
-- **Agent/Assignee:** Access to assigned tickets, tasks, and limited internal notes.
-- **Client/Requestor:** Access to their created tickets, ability to add public comments.
+The heart of the application revolves around the strict progression of a support ticket.
 
-## Functional Requirements
-- Secure authentication.
-- Real-time updates for notifications and ticket status.
-- Markdown rendering for ticket descriptions and comments.
-- Date range filtering across all analytical views.
+```mermaid
+stateDiagram-v2
+    [*] --> Open : Client submits ticket
+    
+    Open --> InProgress : Agent claims ticket
+    InProgress --> WaitingForSupport : Agent requests info
+    WaitingForSupport --> InProgress : Client replies
+    
+    InProgress --> Resolved : Issue fixed
+    Resolved --> Closed : 48h timeout / Confirmed
+    
+    Resolved --> InProgress : Client reopens
+    
+    Closed --> [*]
+```
 
-## Non-functional Requirements
-- **Performance:** Fast initial load and rendering.
-- **Accessibility:** Ensure high contrast, keyboard navigation.
-- **Scalability:** System supports enterprise loads.
+---
 
-## Success Metrics
-- Reduction in average ticket resolution time.
-- Increased user productivity.
+## 4. User Roles
+- **System Admin:** Complete control over tenants, configurations, and global users.
+- **Manager:** Can view reports, manage team queues, and reassign tickets.
+- **Agent:** Handles day-to-day ticket resolution and task execution.
+- **Client (Requestor):** Can submit tickets, view their own ticket history, and communicate with agents.
 
-## Future Scope
-- AI-driven ticket categorization.
-- Real-time collaborative features.
+## 5. Functional Requirements
+
+### 5.1 Authentication & Authorization
+- JWT-based authentication.
+- Strict RBAC enforced at the route and component level.
+
+### 5.2 Ticket Management
+- Create, view, update, and close tickets.
+- Assign tickets to queues or individual agents.
+- Priority levels: Low, Medium, High, Critical.
+- Chronological timeline capturing system events, internal notes, and public replies.
+
+### 5.3 Task Management
+- Standalone tasks or tasks linked to specific tickets.
+- Status tracking (To Do, In Progress, Review, Done).
+
+### 5.4 Reporting & Dashboard
+- Visual aggregation of ticket statuses.
+- Global date range filtering.
+
+## 6. Non-Functional Requirements
+- **Performance:** App shell must load in < 2 seconds.
+- **Accessibility:** WCAG 2.1 AA compliance (contrast ratios, keyboard navigation).
+- **Responsiveness:** Fully functional on mobile, tablet, and desktop.
+
+## 7. Success Metrics
+- Daily Active Users (DAU) adoption rate.
+- Average Handle Time (AHT).
+- Customer Satisfaction Score (CSAT).

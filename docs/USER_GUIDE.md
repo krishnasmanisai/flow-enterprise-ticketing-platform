@@ -1,22 +1,37 @@
 # User Guide
 
-## Login
-1. Navigate to the application root.
-2. Enter your registered email and password.
-3. Click "Sign In".
+Welcome to Flow Enterprise Support. This guide will help you navigate the core features of the platform.
 
-## Dashboard
-The dashboard provides a high-level overview. Use the **Date Range** dropdown in the top right to filter metrics across the entire view.
+## Getting Started
 
-## Creating Tickets
-1. Navigate to **Tickets -> Create Ticket**.
-2. Fill out the subject, description, priority, and assign it to a team or individual.
-3. Click "Submit".
+### Login
+1. Navigate to the login portal.
+2. Enter your corporate email and password.
+3. Click **Sign In**.
 
-## Updating Tickets
-1. From the **Ticket Explorer**, click on any ticket.
-2. Update fields such as Status, Priority, or Assignee directly from the right sidebar.
-3. Add a public comment or internal note using the conversation engine.
+## Using the Dashboard
+The Dashboard is your operational control center.
+- **Metrics Overview:** Quickly see how many tickets are open, unresolved, or breaching SLA.
+- **Date Filtering:** Use the dropdown in the top right to filter the entire dashboard by "Last 7 Days", "Last 30 Days", or a "Custom Range".
 
-## Internal Users
-Administrators can manage staff by navigating to **Settings -> Internal Users**. Here you can invite new members and manage roles.
+## Managing Tickets
+
+### Ticket Explorer
+Navigate to **Tickets -> Explorer** using the left sidebar.
+- Click column headers to sort.
+- Use the **Filter** button to narrow down tickets by Status, Priority, or Assignee.
+
+### Ticket Details
+Click on any ticket in the Explorer to open its workspace.
+- **Left Pane:** View the conversation history, add public replies to the client, or write internal notes visible only to your team.
+- **Right Pane:** Update ticket metadata (Priority, Assignee, Status) and view linked tasks.
+
+## Managing Tasks
+Navigate to **Tasks** in the sidebar.
+- Switch between "Assigned to Me" and "Raised by Me".
+- Tasks can be linked to tickets to track sub-work required to resolve an issue.
+
+## Settings & Administration
+If you have Admin privileges, navigate to **Settings**.
+- **Internal Users:** Invite new agents, manage roles, and deactivate former employees.
+- **Client Configuration:** Adjust global settings and metadata fields for specific client accounts.
