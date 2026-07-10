@@ -1,0 +1,15 @@
+--- src/App.tsx
++++ src/App.tsx
+@@ -43,9 +43,9 @@
+             <Route path="/ticket_details" element={<TicketDetails onNavigate={(p) => navigate(`/${p}`)} />} />
+             <Route path="/tasks" element={<Tasks onNavigate={(p) => navigate(`/${p}`)} />} />
+             <Route path="/task_details" element={<TaskDetails onNavigate={(p) => navigate(`/${p}`)} />} />
+-            <Route path="/ticket_explorer" element={<TicketExplorer />} />
+-            <Route path="/created_by_me" element={<CreatedByMe />} />
++            <Route path="/ticket_explorer" element={<TicketExplorer onNavigate={(p) => navigate(`/${p}`)} />} />
++            <Route path="/created_by_me" element={<CreatedByMe onNavigate={(p) => navigate(`/${p}`)} />} />
+             <Route path="/settings" element={<Settings onNavigate={(p) => navigate(`/${p}`)} />} />
+-            <Route path="/reports" element={<Reports />} />
++            <Route path="/reports" element={<Reports onNavigate={(p) => navigate(`/${p}`)} />} />
+             <Route path="/client_configuration" element={<ClientConfiguration onNavigate={(p) => navigate(`/${p}`)} />} />
+             <Route path="/client_details" element={<ClientDetails onNavigate={(p) => navigate(`/${p}`)} />} />

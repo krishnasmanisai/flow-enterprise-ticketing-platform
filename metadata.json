@@ -1,0 +1,6 @@
+{
+  "name": "FLOW - Enterprise Support Ticketing",
+  "description": "Enterprise support ticketing and task management system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

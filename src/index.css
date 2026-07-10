@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Layout & Surfaces */
+  --color-bg-page: #F5F6FA;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-alt: #FAFBFC;
+  
+  /* Borders */
+  --color-border-subtle: rgba(20, 24, 38, 0.06);
+  --color-border-default: rgba(20, 24, 38, 0.08);
+  --color-border-strong: rgba(20, 24, 38, 0.10);
+
+  /* Typography */
+  --color-text-primary: #12141D;
+  --color-text-secondary: #4B5468;
+  --color-text-tertiary: #6B7488;
+  --color-text-muted: #98A2B3;
+  
+  /* Brand - Indigo */
+  --color-brand-50: #EEF0FF;
+  --color-brand-300: #A5AEFF;
+  --color-brand-500: #5B5BD6;
+  --color-brand-600: #4A47C4;
+  --color-brand-700: #3A38A0;
+
+  /* Secondary Accent - Teal */
+  --color-teal-100: #DFF7F5;
+  --color-teal-500: #0EA5A6;
+
+  /* Amber */
+  --color-amber-50: #FFF6E5;
+  --color-amber-500: #F5A623;
+  --color-amber-600: #8C5A0A;
+  
+  /* Semantic Pairs */
+  --color-success-bg: #E7F8EE;
+  --color-success-text: #105C31;
+  
+  --color-warning-bg: #FFF6E5;
+  --color-warning-text: #8C5A0A;
+  
+  --color-error-bg: #FDEAEA;
+  --color-error-text: #C22C2C;
+  
+  --color-info-bg: #EAF1FF;
+  --color-info-text: #2454C7;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(20, 24, 38, 0.05);
+  --shadow-md: 0 1px 2px rgba(20, 24, 38, 0.05);
+  --shadow-lg: 0 1px 2px rgba(20, 24, 38, 0.05);
+  --shadow-modal: 0 1px 2px rgba(20, 24, 38, 0.05);
+}
+
+@layer base {
+  body {
+    @apply bg-bg-page text-text-secondary font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-text-primary font-medium tracking-tight;
+  }
+}
+
+/* Custom Scrollbar for a polished look */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+  border-radius: 20px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-muted);
+}
+
+/* Base utility for forms */
+@layer components {
+  .input-base {
+    @apply bg-bg-surface border border-border-default rounded-md text-sm text-text-primary px-3 py-2 transition-all duration-200;
+    @apply focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500;
+    @apply placeholder:text-text-muted disabled:bg-bg-page disabled:text-text-muted disabled:cursor-not-allowed;
+  }
+  
+  .card-base {
+    @apply bg-bg-surface border border-border-subtle rounded-lg shadow-sm overflow-hidden;
+  }
+}
+
+
+@layer utilities {
+  @media (max-width: 768px) {
+    .responsive-table {
+      display: block;
+      width: 100%;
+    }
+    .responsive-table thead {
+      display: none;
+    }
+    .responsive-table tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+    }
+    .responsive-table tr {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--color-border-default);
+      border-radius: 8px;
+      background: var(--color-bg-surface);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      padding: 12px;
+    }
+    .responsive-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-border-subtle);
+      text-align: right;
+    }
+    .responsive-table td:last-child {
+      border-bottom: none;
+    }
+    .responsive-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-right: 16px;
+      text-align: left;
+    }
+    .responsive-table td > * {
+      text-align: right;
+      max-width: 60%;
+    }
+  }
+}

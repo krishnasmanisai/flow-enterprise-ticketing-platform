@@ -1,0 +1,35 @@
+--- src/components/Header.tsx
++++ src/components/Header.tsx
+@@ -47,6 +47,21 @@
+           <HelpCircle size={16} />
+         </Button>
+ 
++        {/* App Switcher */}
++        <div className="relative">
++          <Button 
++            variant="ghost" 
++            size="icon" 
++            onClick={() => toggleDropdown('apps')}
++            className={`relative ${activeDropdown === 'apps' ? 'bg-bg-surface-hover text-text-primary' : 'text-text-secondary'}`}
++            title="Apps"
++          >
++            <Grid size={16} />
++          </Button>
++          
++          {activeDropdown === 'apps' && (
++            <div className="absolute right-0 top-full mt-1.5 w-64 bg-bg-surface rounded-lg shadow-lg border border-border-default overflow-hidden animate-in fade-in slide-in-from-top-2 z-50 p-2 grid grid-cols-2 gap-1">
++              <button className="flex flex-col items-center gap-2 p-3 rounded-md hover:bg-bg-surface-hover text-text-primary transition-colors group">
++                <div className="w-10 h-10 rounded border border-border-default bg-bg-app flex items-center justify-center text-text-muted group-hover:text-action-primary group-hover:border-action-primary/30 transition-colors shadow-sm"><MessageSquare size={20} /></div>
++                <span className="text-[11px] font-medium">Ticketing</span>
++              </button>
++              <button className="flex flex-col items-center gap-2 p-3 rounded-md hover:bg-bg-surface-hover text-text-primary transition-colors group">
++                <div className="w-10 h-10 rounded border border-border-default bg-bg-app flex items-center justify-center text-text-muted group-hover:text-action-primary group-hover:border-action-primary/30 transition-colors shadow-sm"><User size={20} /></div>
++                <span className="text-[11px] font-medium">CRM</span>
++              </button>
++            </div>
++          )}
++        </div>
++
+         {/* Notifications */}
+         <div className="relative">
+           <Button 

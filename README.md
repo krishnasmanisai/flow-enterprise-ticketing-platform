@@ -1,11 +1,28 @@
-<div align="center">
+# Flow Enterprise Support
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+## Project Overview
+Flow Enterprise Support is a multi-tenant, enterprise-grade SaaS platform designed for comprehensive ticket tracking, task management, and team collaboration.
 
-  <h1>Built with AI Studio</h2>
+## Vision
+To streamline support operations and project management through an intuitive, scalable, and customizable workspace.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Features
+- **Dashboard:** High-level metrics and date-range filtered reporting.
+- **Ticket Explorer:** Advanced filtering, sorting, and management of support tickets.
+- **Task Management:** Cross-project task tracking and assignment.
+- **User Management:** Internal user administration and role-based access control.
+- **Dynamic Workflows:** Customizable support workflows.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Technology Stack
+- **Frontend:** React 18, Vite, TypeScript
+- **Styling:** Tailwind CSS, Lucide React (Icons)
+- **Routing:** React Router DOM
 
-</div>
+## Running Locally
+```bash
+npm install
+npm run dev
+```
+
+## Architecture Summary
+The application follows a modular, client-side React architecture (SPA). State is managed via React hooks, and the application is structurally divided into core pages, reusable UI components, and utility functions.

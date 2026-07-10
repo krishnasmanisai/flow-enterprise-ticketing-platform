@@ -1,0 +1,100 @@
+src/components/ui/Button.tsx:24:      danger: 'bg-status-error-text text-white hover:bg-red-700 shadow-sm focus-visible:ring-status-error-text',
+src/components/ui/Badge.tsx:22:    accent: 'bg-blue-50 text-accent-blue border-blue-200',
+src/index.css:6:  --color-bg-app: #f7f8f9;
+src/index.css:7:  --color-bg-surface: #ffffff;
+src/index.css:8:  --color-bg-surface-hover: #f3f4f6;
+src/index.css:9:  --color-bg-surface-active: #e5e7eb;
+src/index.css:10:  --color-bg-elevated: #ffffff;
+src/index.css:13:  --color-border-subtle: #f3f4f6;
+src/index.css:14:  --color-border-default: #e5e7eb;
+src/index.css:15:  --color-border-strong: #d1d5db;
+src/index.css:16:  --color-border-focus: #111827;
+src/index.css:19:  --color-text-primary: #111827;
+src/index.css:20:  --color-text-secondary: #4b5563;
+src/index.css:21:  --color-text-tertiary: #6b7280;
+src/index.css:22:  --color-text-muted: #9ca3af;
+src/index.css:25:  --color-action-primary: #111827;
+src/index.css:26:  --color-action-primary-hover: #1f2937;
+src/index.css:27:  --color-on-action-primary: #ffffff;
+src/index.css:30:  --color-status-success-bg: #ecfdf5;
+src/index.css:31:  --color-status-success-text: #059669;
+src/index.css:32:  --color-status-success-border: #a7f3d0;
+src/index.css:34:  --color-status-warning-bg: #fffbeb;
+src/index.css:35:  --color-status-warning-text: #d97706;
+src/index.css:36:  --color-status-warning-border: #fde68a;
+src/index.css:38:  --color-status-error-bg: #fef2f2;
+src/index.css:39:  --color-status-error-text: #dc2626;
+src/index.css:40:  --color-status-error-border: #fecaca;
+src/index.css:42:  --color-status-info-bg: #eff6ff;
+src/index.css:43:  --color-status-info-text: #2563eb;
+src/index.css:44:  --color-status-info-border: #bfdbfe;
+src/index.css:46:  --color-status-neutral-bg: #f3f4f6;
+src/index.css:47:  --color-status-neutral-text: #4b5563;
+src/index.css:48:  --color-status-neutral-border: #e5e7eb;
+src/index.css:51:  --color-accent-blue: #3b82f6;
+src/index.css:52:  --color-accent-indigo: #6366f1;
+src/index.css:53:  --color-accent-purple: #8b5cf6;
+src/index.css:68:  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+src/index.css:69:  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+src/index.css:70:  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+src/index.css:71:  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+src/pages/Login.tsx:175:            <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+src/pages/Login.tsx:176:            <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+src/pages/Login.tsx:177:            <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+src/pages/Login.tsx:178:            <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+src/pages/GenerateReportDrawer.tsx:6:      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm z-50 transition-opacity" onClick={onClose} />
+src/pages/GenerateReportDrawer.tsx:8:        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 shrink-0">
+src/pages/GenerateReportDrawer.tsx:10:            <h2 className="text-[18px] font-bold text-[#0f172a] flex items-center gap-2">
+src/pages/GenerateReportDrawer.tsx:12:              <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+src/pages/GenerateReportDrawer.tsx:14:            <p className="text-[13px] text-slate-500 mt-0.5">Configure parameters for your export</p>
+src/pages/GenerateReportDrawer.tsx:16:          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+src/pages/GenerateReportDrawer.tsx:25:              <div className="w-7 h-7 rounded-lg bg-[#f1f5f9] flex items-center justify-center shrink-0">
+src/pages/GenerateReportDrawer.tsx:26:                <SlidersHorizontal className="w-4 h-4 text-[#475569]" />
+src/pages/GenerateReportDrawer.tsx:28:              <h3 className="text-[14px] font-bold text-[#0f172a]">Report Configuration</h3>
+src/pages/GenerateReportDrawer.tsx:33:                <label className="block text-[12px] font-medium text-[#0f172a] mb-1.5">
+src/pages/GenerateReportDrawer.tsx:34:                  Report Name <span className="text-red-500">*</span>
+src/pages/GenerateReportDrawer.tsx:37:                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+src/pages/GenerateReportDrawer.tsx:38:                  <input type="text" placeholder="e.g. Q3 Access Audit" className="w-full h-10 pl-9 pr-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300" />
+src/pages/GenerateReportDrawer.tsx:43:                <label className="block text-[12px] font-medium text-[#0f172a] mb-1.5">
+src/pages/GenerateReportDrawer.tsx:47:                  <select className="w-full h-10 pl-3 pr-10 border border-slate-200 rounded-lg text-sm text-slate-600 appearance-none bg-white focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300">
+src/pages/GenerateReportDrawer.tsx:52:                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+src/pages/GenerateReportDrawer.tsx:57:                <label className="block text-[12px] font-medium text-[#0f172a] mb-1.5">
+src/pages/GenerateReportDrawer.tsx:61:                  <button className="h-12 border-2 border-[#1e293b] bg-[#e2e8f0]/50 rounded-lg flex flex-col items-center justify-center gap-0.5 relative">
+src/pages/GenerateReportDrawer.tsx:62:                    <svg className="w-4 h-4 text-[#1e293b]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6"/><path d="M9 11h6"/></svg>
+src/pages/GenerateReportDrawer.tsx:63:                    <span className="text-[11px] font-bold text-[#1e293b]">CSV</span>
+src/pages/GenerateReportDrawer.tsx:65:                  <button className="h-12 border border-slate-200 rounded-lg flex flex-col items-center justify-center gap-0.5 text-slate-500 hover:border-slate-300">
+src/pages/GenerateReportDrawer.tsx:69:                  <button className="h-12 border border-slate-200 rounded-lg flex flex-col items-center justify-center gap-0.5 text-slate-500 hover:border-slate-300">
+src/pages/GenerateReportDrawer.tsx:81:              <div className="w-7 h-7 rounded-lg bg-[#f1f5f9] flex items-center justify-center shrink-0">
+src/pages/GenerateReportDrawer.tsx:82:                <Calendar className="w-4 h-4 text-[#475569]" />
+src/pages/GenerateReportDrawer.tsx:84:              <h3 className="text-[14px] font-bold text-[#0f172a]">Data Scope</h3>
+src/pages/GenerateReportDrawer.tsx:89:                <label className="block text-[12px] font-medium text-[#0f172a] mb-2">
+src/pages/GenerateReportDrawer.tsx:94:                    <div className="absolute -top-2 left-2 bg-white px-1 text-[10px] font-medium text-slate-500 z-10">Start</div>
+src/pages/GenerateReportDrawer.tsx:95:                    <input type="text" placeholder="mm/dd/yyyy" className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm text-slate-600 focus:outline-none focus:border-slate-300" />
+src/pages/GenerateReportDrawer.tsx:96:                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+src/pages/GenerateReportDrawer.tsx:99:                    <div className="absolute -top-2 left-2 bg-white px-1 text-[10px] font-medium text-slate-500 z-10">End</div>
+src/pages/GenerateReportDrawer.tsx:100:                    <input type="text" placeholder="mm/dd/yyyy" className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm text-slate-600 focus:outline-none focus:border-slate-300" />
+src/pages/GenerateReportDrawer.tsx:101:                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+src/pages/GenerateReportDrawer.tsx:106:                <button className="px-3 py-1 bg-[#e0e7ff] text-[#3b82f6] rounded-full text-[11px] font-medium border border-blue-100">Last 7 Days</button>
+src/pages/GenerateReportDrawer.tsx:107:                <button className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[11px] font-medium hover:bg-slate-200 transition-colors">Last 30 Days</button>
+src/pages/GenerateReportDrawer.tsx:108:                <button className="px-3 py-1 bg-[#e0e7ff] text-[#3b82f6] rounded-full text-[11px] font-medium border border-blue-100">This Quarter</button>
+src/pages/GenerateReportDrawer.tsx:117:                <div className="w-7 h-7 rounded-lg bg-[#f1f5f9] flex items-center justify-center shrink-0">
+src/pages/GenerateReportDrawer.tsx:118:                  <Mail className="w-4 h-4 text-[#475569]" />
+src/pages/GenerateReportDrawer.tsx:120:                <h3 className="text-[14px] font-bold text-[#0f172a]">Delivery Settings</h3>
+src/pages/GenerateReportDrawer.tsx:122:              <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+src/pages/GenerateReportDrawer.tsx:127:        <div className="p-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-slate-50/50">
+src/pages/GenerateReportDrawer.tsx:128:          <button onClick={onClose} className="px-4 h-10 text-[13px] font-medium text-slate-600 hover:text-[#0f172a] transition-colors">
+src/pages/GenerateReportDrawer.tsx:131:          <button onClick={onClose} className="px-5 h-10 bg-[#0f172a] hover:bg-[#1e293b] text-white text-[13px] font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+src/pages/CreateTicketFlow.tsx:112:              <CheckCircle size={64} className="text-secondary mb-6" style={{ fill: '#ffdbd0', strokeWidth: 1.5 }} />
+src/pages/TeamManagement.tsx:75:        <div className="flex-1 bg-bg-app border border-border-default rounded-lg relative overflow-hidden flex flex-col items-center justify-start pt-16 pb-24 overflow-y-auto custom-scrollbar shadow-inner bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+src/pages/Dashboard.tsx:29:    { label: 'Due Today', value: '86', icon: Clock, color: 'text-accent-blue', bg: 'bg-blue-50' },
+src/pages/TaskDetails.tsx:39:            <div className="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-outline-variant/30 p-6">
+src/pages/TaskDetails.tsx:57:            <div className="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-outline-variant/30 p-6">
+src/pages/TaskDetails.tsx:66:                  <div className="w-10 h-10 rounded bg-red-100 text-red-600 flex items-center justify-center shrink-0 font-mono text-xs font-bold">PDF</div>
+src/pages/TaskDetails.tsx:73:                  <div className="w-10 h-10 rounded bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-mono text-xs font-bold">TXT</div>
+src/pages/TaskDetails.tsx:85:            <div className="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-blue-200 overflow-hidden">
+src/pages/TaskDetails.tsx:86:              <div className="bg-blue-50/50 p-4 border-b border-blue-100 flex items-center justify-between">
+src/pages/TaskDetails.tsx:87:                <h3 className="font-bold text-blue-900 flex items-center gap-2"><RefreshCw size={16} /> Jira Details</h3>
+src/pages/TaskDetails.tsx:88:                <span className="text-xs font-mono text-blue-700">Synced 2m ago</span>
+src/pages/TaskDetails.tsx:93:                <div className="flex justify-between border-b border-outline-variant/30 pb-2"><span className="text-outline uppercase text-[10px] font-bold tracking-wider">Type</span><span className="font-medium text-red-600">Bug</span></div>
+src/pages/TaskDetails.tsx:95:                <button className="w-full mt-2 h-10 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Open in Jira</button>
+src/pages/TaskDetails.tsx:99:            <div className="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-outline-variant/30 p-6">
