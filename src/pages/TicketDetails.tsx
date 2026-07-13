@@ -29,6 +29,7 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
   const [replyContent, setReplyContent] = useState('');
   
   const [status, setStatus] = useState('Open');
+  const userRole = 'edit'; // Mock user role
   const [priority, setPriority] = useState('Critical');
   const [assignee, setAssignee] = useState('John Doe');
 
@@ -59,8 +60,7 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
   const [emailBcc, setEmailBcc] = useState('');
   const [emailSubject, setEmailSubject] = useState('Re: {originalRequestSubject}');
 
-  const [isEditingDetails, setIsEditingDetails] = useState(false);
-  const [ticketFields, setTicketFields] = useState([
+    const [ticketFields, setTicketFields] = useState([
     { id: 'f1', label: 'Project', type: 'select', value: 'Customer Support', options: ['Customer Support', 'IT Ops', 'HR'] },
     { id: 'f2', label: 'Request Type', type: 'select', value: 'Incident', options: ['Incident', 'Service Request', 'Question'] },
     { id: 'f3', label: 'Service Type', type: 'select', value: 'Authentication', options: ['Authentication', 'Billing', 'Access'] },
@@ -304,22 +304,30 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
             <div className="lg:w-[70%] flex flex-col transition-all">
               <div className="px-5 py-4 bg-bg-surface-alt/50 border-b border-border-default flex items-center justify-between">
                  <h3 className="font-bold text-sm text-text-primary tracking-tight">Ticket Details</h3>
-                 {isEditingDetails ? (
-                   <div className="flex items-center gap-2">
-                     <Button variant="ghost" size="sm" onClick={() => setIsEditingDetails(false)} className="text-text-secondary hover:text-text-primary h-8 text-xs font-bold">Cancel</Button>
-                     <Button variant="primary" size="sm" onClick={() => setIsEditingDetails(false)} className="h-8 text-xs px-4 font-bold">Save Changes</Button>
-                   </div>
-                 ) : (
-                   <Button variant="ghost" size="sm" onClick={() => setIsEditingDetails(true)} className="text-brand-500 hover:text-brand-600 hover:bg-brand-50/50 h-8 text-xs font-bold px-3">Edit Ticket</Button>
-                 )}
+                 
                </div>
                
                <div className="p-6 flex flex-col">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                    <div className="">
+                      <div className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">Status</div>
+                      {userRole === 'edit' ? (
+                        <SingleSearchDropdown 
+                          options={['Open', 'In Progress', 'Waiting for Customer', 'Resolved', 'Closed']} 
+                          value={status} 
+                          onChange={setStatus} 
+                          className="h-9 text-sm w-full input-base border border-border-default bg-bg-page focus-within:border-border-focus font-medium" 
+                        />
+                      ) : (
+                        <div className="text-[13px] font-semibold text-text-primary break-words leading-relaxed py-1.5 border-b border-border-subtle">
+                          {status || '-'}
+                        </div>
+                      )}
+                    </div>
                     {ticketFields.map(field => (
                       <div key={field.id} className={field.type === 'textarea' ? 'col-span-1 md:col-span-2' : ''}>
                         <div className="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">{field.label}</div>
-                        {isEditingDetails ? (
+                        {userRole === 'edit' ? (
                           field.type === 'select' ? (
                             <SingleSearchDropdown 
                               options={field.options || []} 
