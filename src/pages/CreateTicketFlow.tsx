@@ -12,24 +12,32 @@ const InputLabel = ({ children, required }: { children: React.ReactNode, require
 
 const inputClass = "w-full min-h-[40px] px-3 py-2 bg-bg-surface-hover border border-transparent rounded hover:bg-border-subtle focus:bg-bg-surface focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors text-sm outline-none";
 
-export function CreateTicketFlow({ type, onClose }: { type?: string | null; onClose: () => void }) {
+export interface CreateTicketFlowProps {
+  type?: string | null;
+  onClose: () => void;
+  mode?: 'create' | 'clone' | 'change_project';
+  initialData?: any;
+}
+
+export function CreateTicketFlow({ type, onClose, mode = 'create', initialData }: CreateTicketFlowProps) {
   const [step, setStep] = useState(1);
   const [success, setSuccess] = useState(false);
+
   const isTicket = type === 'ticket';
   const isInternal = type === 'internal_task';
   const isJira = type === 'jira_task';
 
-  const [client, setClient] = useState('');
-  const [project, setProject] = useState('');
-  const [reqType, setReqType] = useState('');
-  const [subReqType, setSubReqType] = useState('');
-  const [serviceType, setServiceType] = useState('');
-  const [summary, setSummary] = useState('');
-  const [description, setDescription] = useState('');
-  const [assignee, setAssignee] = useState('');
-  const [businessUnit, setBusinessUnit] = useState('');
-  const [subBusinessUnit, setSubBusinessUnit] = useState('');
-  const [jiraBoard, setJiraBoard] = useState('');
+  const [client, setClient] = useState(initialData?.client || '');
+  const [project, setProject] = useState(mode === 'clone' ? '' : (initialData?.project || ''));
+  const [reqType, setReqType] = useState(initialData?.reqType || '');
+  const [subReqType, setSubReqType] = useState(initialData?.subReqType || '');
+  const [serviceType, setServiceType] = useState(initialData?.serviceType || '');
+  const [summary, setSummary] = useState(initialData?.summary || '');
+  const [description, setDescription] = useState(initialData?.description || '');
+  const [assignee, setAssignee] = useState(mode === 'clone' ? '' : (initialData?.assignee || ''));
+  const [businessUnit, setBusinessUnit] = useState(initialData?.businessUnit || '');
+  const [subBusinessUnit, setSubBusinessUnit] = useState(initialData?.subBusinessUnit || '');
+  const [jiraBoard, setJiraBoard] = useState(initialData?.jiraBoard || '');
 
   const handleCreate = () => {
     setSuccess(true);
@@ -41,6 +49,7 @@ export function CreateTicketFlow({ type, onClose }: { type?: string | null; onCl
     <div className="flex flex-col gap-6">
       <div className="bg-bg-surface p-5 rounded-lg border border-border-default shadow-sm flex flex-col gap-5">
         <h3 className="text-sm font-bold text-text-primary border-b border-border-default pb-2">Context Details</h3>
+        {mode !== 'change_project' && (
         <div>
           <InputLabel required>Brand (Client)</InputLabel>
           <SearchableSelect
@@ -50,6 +59,7 @@ export function CreateTicketFlow({ type, onClose }: { type?: string | null; onCl
             className={searchableSelectClass}
           />
         </div>
+        )}
         <div>
           <InputLabel required>Project</InputLabel>
           <SearchableSelect
@@ -296,7 +306,7 @@ export function CreateTicketFlow({ type, onClose }: { type?: string | null; onCl
             </div>
             <div>
               <h2 className="text-xl font-bold text-text-primary tracking-tight">
-                {isTicket && "Create Ticket"}
+                {isTicket && (mode === 'change_project' ? "Change Project" : mode === 'clone' ? "Clone Ticket" : "Create Ticket")}
                 {isInternal && "Create Internal Task"}
                 {isJira && "Create Jira Task"}
               </h2>
@@ -332,9 +342,9 @@ export function CreateTicketFlow({ type, onClose }: { type?: string | null; onCl
               <div className="w-16 h-16 bg-success-bg rounded-full flex items-center justify-center mb-6">
                 <CheckCircle size={32} className="text-success-text" />
               </div>
-              <h1 className="text-2xl font-bold text-text-primary mb-2">Successfully Created</h1>
+              <h1 className="text-2xl font-bold text-text-primary mb-2">{mode === 'change_project' ? 'Successfully Updated' : 'Successfully Created'}</h1>
               <p className="text-sm text-text-secondary mb-10">
-                The {isTicket ? 'ticket' : 'task'} has been successfully created and logged into the system. You can now view it in your dashboard.
+                {mode === 'change_project' ? 'The ticket project has been successfully changed.' : `The ${isTicket ? 'ticket' : 'task'} has been successfully created and logged into the system. You can now view it in your dashboard.`}
               </p>
               
               <div className="bg-bg-surface border border-border-default rounded-lg p-5 w-full flex items-center justify-between text-left mb-8 shadow-sm">
@@ -363,7 +373,7 @@ export function CreateTicketFlow({ type, onClose }: { type?: string | null; onCl
               {isTicket && step === 1 ? (
                 <Button variant="primary" onClick={() => setStep(2)}>Next <ArrowRight size={16} className="ml-2" /></Button>
               ) : (
-                <Button variant="primary" onClick={handleCreate}>Create {isTicket ? 'Ticket' : 'Task'}</Button>
+                <Button variant="primary" onClick={handleCreate}>{mode === 'change_project' ? 'Update Project' : `Create ${isTicket ? 'Ticket' : 'Task'}`}</Button>
               )}
             </div>
           ) : (

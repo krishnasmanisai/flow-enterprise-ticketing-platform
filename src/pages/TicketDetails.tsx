@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
-  ChevronLeft, Send, Paperclip, MoreHorizontal, User, Clock, Link as LinkIcon, 
+import { FolderOpen, ChevronLeft, Send, Paperclip, MoreHorizontal, User, Clock, Link as LinkIcon, 
   Activity, CheckSquare, History, FileText, Image as ImageIcon, Download, 
   Lock, Mail, Phone, Building, Briefcase, Info, CheckCircle2, Shield, Globe, Plus
 } from 'lucide-react';
@@ -12,11 +11,13 @@ import { SingleSearchDropdown } from '../components/ui/SingleSearchDropdown';
 import { CopyId } from '../components/ui/CopyId';
 import { RichTextEditor } from '../components/ui/RichTextEditor';
 import { LogTimeModal, TimeLogEntry } from '../components/ticket/LogTimeModal';
+import { LinkTicketModal } from '../components/LinkTicketModal';
+import { CreateTicketFlow } from './CreateTicketFlow';
+import { Copy } from 'lucide-react';
 
 // Mock modals
 const TicketHistoryModal = ({ onClose }: any) => null;
-const ChangeProjectModal = ({ onClose }: any) => null;
-const LinkTicketModal = ({ onClose }: any) => null;
+
 const ReassignModal = ({ onClose }: any) => null;
 
 export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page) => void }) {
@@ -73,6 +74,9 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
   const [isChangeProjectModalOpen, setIsChangeProjectModalOpen] = useState(false);
   const [isLinkTicketModalOpen, setIsLinkTicketModalOpen] = useState(false);
   const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
+  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
+  const [isCloneTicketOpen, setIsCloneTicketOpen] = useState(false);
+
   const [isLogTimeModalOpen, setIsLogTimeModalOpen] = useState(false);
   const [timeLogEntries, setTimeLogEntries] = useState<TimeLogEntry[]>([]);
   const [showToast, setShowToast] = useState(false);
@@ -150,7 +154,34 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
 
           <div className="flex items-center gap-3 shrink-0">
             <Button variant="secondary" size="sm" icon={Clock} onClick={() => setIsLogTimeModalOpen(true)} className="h-8 font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 border-brand-200">Log Time</Button>
-            <Button variant="outline" size="sm" icon={MoreHorizontal} className="h-8 font-semibold">Actions</Button>
+            <div className="relative">
+              <Button variant="outline" size="sm" icon={MoreHorizontal} className="h-8 font-semibold" onClick={() => setIsActionsMenuOpen(!isActionsMenuOpen)}>Actions</Button>
+              {isActionsMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsActionsMenuOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-bg-surface border border-border-default rounded-md shadow-lg z-50 py-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <button 
+                      onClick={() => { setIsActionsMenuOpen(false); setIsLinkTicketModalOpen(true); }}
+                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-bg-surface-hover flex items-center gap-2"
+                    >
+                      <LinkIcon size={14} /> Link Ticket
+                    </button>
+                    <button 
+                      onClick={() => { setIsActionsMenuOpen(false); setIsChangeProjectModalOpen(true); }}
+                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-bg-surface-hover flex items-center gap-2"
+                    >
+                      <FolderOpen size={14} /> Change Project
+                    </button>
+                    <button 
+                      onClick={() => { setIsActionsMenuOpen(false); setIsCloneTicketOpen(true); }}
+                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-bg-surface-hover flex items-center gap-2"
+                    >
+                      <Copy size={14} /> Clone Ticket
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -723,9 +754,19 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
 
       </div>
       {isHistoryModalOpen && <TicketHistoryModal onClose={() => setIsHistoryModalOpen(false)} />}
-      {isChangeProjectModalOpen && <ChangeProjectModal onClose={() => setIsChangeProjectModalOpen(false)} currentProject="Customer Support" />}
+      {isChangeProjectModalOpen && <CreateTicketFlow type="ticket" mode="change_project" initialData={{ client: 'Acme Corp', project: 'Customer Support' }} onClose={() => setIsChangeProjectModalOpen(false)} />}
       {isLinkTicketModalOpen && <LinkTicketModal onClose={() => setIsLinkTicketModalOpen(false)} />}
       {isReassignModalOpen && <ReassignModal onClose={() => setIsReassignModalOpen(false)} currentAssignee={assignee} />}
+      {isCloneTicketOpen && <CreateTicketFlow type="ticket" mode="clone" initialData={{
+        client: 'Acme Corp',
+        reqType: 'Incident',
+        subReqType: 'Software',
+        serviceType: 'Bug',
+        summary: originalRequestSubject,
+        description: 'Mock original description',
+        businessUnit: 'IT',
+        subBusinessUnit: 'Support'
+      }} onClose={() => setIsCloneTicketOpen(false)} />}
       {isLogTimeModalOpen && (
         <LogTimeModal 
           onClose={() => setIsLogTimeModalOpen(false)} 
