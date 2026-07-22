@@ -20,6 +20,7 @@ import EditWorkflow from './pages/EditWorkflow';
 import ClientConfiguration from './pages/ClientConfiguration';
 import ClientDetails from './pages/ClientDetails';
 import { CreateTicketFlow } from './pages/CreateTicketFlow';
+import { FloatingDialer } from './components/FloatingDialer';
 import Dashboard from './pages/Dashboard';
 import TeamManagement from './pages/TeamManagement';
 import InternalUsers from './pages/InternalUsers';
@@ -79,6 +80,7 @@ function AppLayout() {
         </main>
         
         {isCreateDrawerOpen && <CreateTicketFlow type={newParam} onClose={closeDrawer} />}
+        <FloatingDialer />
       </div>
     </div>
   );
