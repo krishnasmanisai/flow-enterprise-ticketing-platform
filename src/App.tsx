@@ -14,6 +14,13 @@ import TicketExplorer from './pages/TicketExplorer';
 import TicketHistory from './pages/TicketHistory';
 import CreatedByMe from './pages/CreatedByMe';
 import Settings from './pages/Settings';
+import ConfigProjects from './pages/config/ConfigProjects';
+import ConfigRequestTypes from './pages/config/ConfigRequestTypes';
+import ConfigFormBuilder from './pages/config/ConfigFormBuilder';
+import ConfigFieldLibrary from './pages/config/ConfigFieldLibrary';
+import ConfigDatasets from './pages/config/ConfigDatasets';
+import ConfigRelationships from './pages/config/ConfigRelationships';
+import ConfigFormTemplates from './pages/config/ConfigFormTemplates';
 import Reports from './pages/Reports';
 import Workflows from './pages/Workflows';
 import EditWorkflow from './pages/EditWorkflow';
@@ -67,6 +74,13 @@ function AppLayout() {
             <Route path="/ticket_history" element={<TicketHistory onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/created_by_me" element={<CreatedByMe onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/settings" element={<Settings onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_projects" element={<ConfigProjects onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_request_types" element={<ConfigRequestTypes onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_form_builder" element={<ConfigFormBuilder onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_field_library" element={<ConfigFieldLibrary onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_datasets" element={<ConfigDatasets onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_relationships" element={<ConfigRelationships onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/config_form_templates" element={<ConfigFormTemplates onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/reports" element={<Reports onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/client_configuration" element={<ClientConfiguration onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/client_details" element={<ClientDetails onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />

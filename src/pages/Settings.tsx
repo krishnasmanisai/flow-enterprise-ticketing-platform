@@ -1,8 +1,63 @@
-import { Settings as SettingsIcon, BarChart2, SlidersHorizontal, Wand2, ArrowRight, Users } from 'lucide-react';
+import { Settings as SettingsIcon, BarChart2, SlidersHorizontal, Wand2, ArrowRight, Users, FolderGit2, FileBox, LayoutTemplate, Library, Database, Files, Network } from 'lucide-react';
 import { Page } from '../types';
 
 export default function Settings({ onNavigate }: { onNavigate: (page: Page) => void }) {
   const categories = [
+    {
+      title: 'Configuration',
+      description: 'Create and manage Projects, Request Types, Forms, Fields, Datasets, and Form Rules entirely through the UI.',
+      items: [
+        { 
+          icon: FolderGit2,
+          label: 'Projects', 
+          description: 'Manage projects and their configurations.', 
+          path: 'config_projects',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: FileBox, 
+          label: 'Request Types', 
+          description: 'Define and manage request types and categories.', 
+          path: 'config_request_types',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: LayoutTemplate, 
+          label: 'Form Builder', 
+          description: 'Design dynamic request forms with visual drag-and-drop builder.', 
+          path: 'config_form_builder',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: Library, 
+          label: 'Field Library', 
+          description: 'Manage reusable global form fields and their properties.', 
+          path: 'config_field_library',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: Database, 
+          label: 'Data Sources', 
+          description: 'Create reusable option lists and stores reusable values.', 
+          path: 'config_datasets',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: Network, 
+          label: 'Relationships', 
+          description: 'Manage dependent dropdowns and configure visual mapping hierarchies.', 
+          path: 'config_relationships',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: Files, 
+          label: 'Form Templates', 
+          description: 'Manage reusable form templates for quicker setups.', 
+          path: 'config_form_templates',
+          iconColor: 'text-text-primary'
+        },
+      ]
+    },
     {
       title: 'Workspace & Configuration',
       description: 'Manage your core organization structure, clients, and branding.',
