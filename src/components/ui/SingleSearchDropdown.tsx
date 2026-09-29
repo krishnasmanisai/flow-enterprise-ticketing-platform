@@ -30,10 +30,15 @@ export function SingleSearchDropdown({ label, icon: Icon, options, value, onChan
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef}>
       <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between gap-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 transition-all duration-150 ${className}`}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
+        className={`w-full flex items-center justify-between gap-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 transition-all duration-150 ${className}`}
       >
         <div className="flex items-center gap-2 truncate">
           {Icon && <Icon className="w-4 h-4 text-text-muted shrink-0" />}
@@ -44,11 +49,11 @@ export function SingleSearchDropdown({ label, icon: Icon, options, value, onChan
             </span>
           </div>
         </div>
-        <ChevronDown className="w-4 h-4 text-text-muted shrink-0" />
+        <ChevronDown className={`w-4 h-4 text-text-muted shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-bg-surface border border-border-default rounded-lg shadow-md z-50 flex flex-col max-h-80 overflow-hidden animate-in fade-in slide-in-from-top-2">
+        <div className="absolute left-0 top-full mt-1.5 w-full min-w-[200px] bg-bg-surface border border-border-default rounded-lg shadow-xl z-50 flex flex-col max-h-80 overflow-hidden animate-in fade-in slide-in-from-top-2">
           <div className="p-2 border-b border-border-subtle bg-bg-page">
             <div className="relative">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
@@ -70,8 +75,14 @@ export function SingleSearchDropdown({ label, icon: Icon, options, value, onChan
                 const isSelected = value === opt;
                 return (
                   <button
+                    type="button"
                     key={opt}
-                    onClick={() => { onChange(opt); setIsOpen(false); }}
+                    onClick={(e) => { 
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onChange(opt); 
+                      setIsOpen(false); 
+                    }}
                     className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md transition-colors text-left ${isSelected ? 'bg-bg-surface-active text-text-primary font-medium' : 'text-text-secondary hover:bg-bg-surface-hover hover:text-text-primary'}`}
                   >
                     <span className="truncate">{opt}</span>

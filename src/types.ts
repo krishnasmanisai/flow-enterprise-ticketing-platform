@@ -18,6 +18,7 @@ export type PageType =
   | 'workflows'
   | 'edit_workflow'
   | 'internal_users'
+  | 'client_users'
   | 'help'
   | 'project_configuration';
 

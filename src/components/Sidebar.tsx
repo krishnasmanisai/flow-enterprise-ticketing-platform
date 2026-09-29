@@ -30,12 +30,12 @@ export default function Sidebar({ currentPage, onNavigate, isMobileOpen = false,
       <aside aria-label="Sidebar Navigation" className={`fixed inset-y-0 left-0 transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative flex flex-col h-full flex-shrink-0 z-50 border-r border-border-default bg-bg-surface transition-all duration-300 ${isCollapsed ? 'w-[72px]' : 'w-64'}`}>
       <div className="h-14 flex items-center justify-between px-4 border-b border-border-default">
         <div className={`flex items-center gap-3 w-full ${isCollapsed ? 'justify-center' : ''}`}>
-          <div className="w-8 h-8 shrink-0 rounded border border-brand-500/20 bg-brand-50 flex items-center justify-center font-bold text-sm text-brand-600 shadow-sm">
-            F
+          <div className="w-8 h-8 shrink-0 rounded-lg border border-brand-500/20 bg-brand-50 flex items-center justify-center font-bold text-xs text-brand-600 shadow-sm">
+            ER
           </div>
           {!isCollapsed && (
             <div className="relative flex flex-col flex-1 min-w-0">
-              <span className="font-sans text-sm font-semibold text-text-primary truncate">FLOW</span>
+              <span className="font-sans text-sm font-bold text-text-primary truncate">Easyrewardz</span>
               <span className="text-[11px] font-medium text-text-muted truncate">
                 Enterprise Support Ticketing
               </span>
@@ -115,13 +115,13 @@ export default function Sidebar({ currentPage, onNavigate, isMobileOpen = false,
       <div className="p-3 border-t border-border-default space-y-1">
         {/* User Profile */}
         <div className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10 mx-auto mb-2' : 'w-full gap-3 px-3 py-2 mb-2'} rounded-md text-sm transition-colors`}>
-          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center shrink-0 text-bg-surface font-semibold text-xs shadow-sm">
-            MS
+          <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 text-white font-bold text-xs shadow-sm">
+            AV
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-text-primary truncate">Mani Sai</span>
-              <span className="text-[11px] text-text-secondary truncate">vanapathy.mani@easyrewardz.com</span>
+              <span className="text-sm font-semibold text-text-primary truncate">Ankita Verma</span>
+              <span className="text-[11px] text-text-muted truncate">ankita.verma@easyrewardz.com</span>
             </div>
           )}
         </div>

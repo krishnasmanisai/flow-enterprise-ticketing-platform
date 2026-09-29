@@ -19,6 +19,7 @@ export default function Tasks({ onNavigate }: { onNavigate: (page: Page) => void
   const [dateRange, setDateRange] = useState('Last 7 Days');
 
   const allTasks = [
+    { id: 'TSK-597', source: 'Jira', client: 'Easyrewardz', linked: 'UNKN-26985', status: 'Closed', title: 'test Jira task', project: 'ELT', createdDate: 'Sep 15, 00:28', createdBy: 'Ankita Verma', assignee: 'Vanaparthy Mani Sai Guptha', priority: 'Urgent', icon: 'message' },
     { id: '25', source: 'Jira', client: 'Easyrewardz', linked: '-', status: 'Not Started', title: 'test from flow', project: '-', createdDate: 'Jul 09, 10:30', createdBy: 'Ankita Verma', assignee: 'Ankita Verma', priority: 'Medium', icon: 'message' },
     { id: '23', source: 'Jira', client: 'Easyrewardz', linked: '-', status: 'Canceled', title: 'Test data', project: '-', createdDate: 'Jul 06, 14:15', createdBy: 'Ankita Verma', assignee: 'Ankita Verma', priority: 'High', icon: 'message' },
     { id: '20', source: 'Jira', client: 'Easyrewardz', linked: '-', status: 'Waiting for support', title: 'test', project: '-', createdDate: 'Jul 02, 11:00', createdBy: 'Ankita Verma', assignee: 'Megha Kumari', priority: 'Low', icon: 'lock' },
@@ -135,7 +136,7 @@ export default function Tasks({ onNavigate }: { onNavigate: (page: Page) => void
                 {tasks.map((task, i) => (
                   <tr 
                     key={i} 
-                    className={`hover:bg-bg-surface-hover transition-colors group cursor-pointer ${i % 2 !== 0 ? 'bg-bg-surface-alt' : ''}`} tabIndex={0} role="button" onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('task_details'); } }} onClick={() => onNavigate('task_details')}
+                    className={`hover:bg-bg-surface-hover transition-colors group cursor-pointer ${i % 2 !== 0 ? 'bg-bg-surface-alt' : ''}`} tabIndex={0} role="button" onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate(`/task_details?id=${task.id}`); } }} onClick={() => onNavigate(`/task_details?id=${task.id}`)}
                   >
                     <td className="px-3 py-3"><span className="text-[11px]"><CopyId id={task.id} type="task" /></span></td>
                     <td className="px-3 py-3 text-[11.5px] text-text-secondary">{task.source}</td>
@@ -169,7 +170,7 @@ export default function Tasks({ onNavigate }: { onNavigate: (page: Page) => void
 
               <div className="md:hidden flex flex-col gap-3 p-4 bg-bg-page">
                 {tasks.map((t, i) => (
-                  <div key={i} className="bg-bg-surface border border-border-default rounded-lg p-4 shadow-sm flex flex-col gap-3 cursor-pointer" onClick={() => onNavigate('task_details')}>
+                  <div key={i} className="bg-bg-surface border border-border-default rounded-lg p-4 shadow-sm flex flex-col gap-3 cursor-pointer" onClick={() => onNavigate(`/task_details?id=${t.id}`)}>
                     <div className="flex justify-between items-start">
                       <div className="flex flex-col gap-1">
                         <span className="text-[11px]"><CopyId id={t.id} type="task" /></span>

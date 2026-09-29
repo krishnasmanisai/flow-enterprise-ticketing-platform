@@ -11,30 +11,36 @@ interface TaskFilterDrawerProps {
 
 export function TaskFilterDrawer({ onClose, onApply, onSaveAndSearch }: TaskFilterDrawerProps) {
   const [taskId, setTaskId] = useState('');
-  const [taskCycle, setTaskCycle] = useState('');
+  const [taskTitle, setTaskTitle] = useState('');
+  const [client, setClient] = useState<string[]>([]);
+  const [project, setProject] = useState<string[]>([]);
   const [taskType, setTaskType] = useState<string[]>([]);
   const [status, setStatus] = useState<string[]>([]);
   const [priority, setPriority] = useState<string[]>([]);
   const [assignee, setAssignee] = useState<string[]>([]);
 
+  const clients = ['Acme Corp', 'Globex', 'Soylent Corp', 'Initech', 'Easy Rewards'];
+  const projects = ['Core Infrastructure', 'Authentication', 'Billing', 'Frontend Platform', 'Project Alpha', 'Project Beta'];
   const taskTypes = ['Internal Task', 'Jira Task'];
   const statuses = ['To Do', 'In Progress', 'In Review', 'Done'];
   const priorities = ['Low', 'Medium', 'High', 'Critical'];
   const assignees = ['Me', 'System', 'John Doe', 'Alice Smith'];
 
   const handleApply = () => {
-    onApply({ taskId, taskCycle, taskType, status, priority, assignee });
+    onApply({ taskId, taskTitle, client, project, taskType, status, priority, assignee });
     onClose();
   };
 
   const handleSaveAndSearch = () => {
-    onSaveAndSearch({ taskId, taskCycle, taskType, status, priority, assignee });
+    onSaveAndSearch({ taskId, taskTitle, client, project, taskType, status, priority, assignee });
     onClose();
   };
 
   const handleClear = () => {
     setTaskId('');
-    setTaskCycle('');
+    setTaskTitle('');
+    setClient([]);
+    setProject([]);
     setTaskType([]);
     setStatus([]);
     setPriority([]);
@@ -81,13 +87,36 @@ export function TaskFilterDrawer({ onClose, onApply, onSaveAndSearch }: TaskFilt
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-text-primary">Task Cycle</label>
+                <label className="text-xs font-medium text-text-primary">Task Title</label>
                 <input 
                   type="text" 
-                  placeholder="e.g. Sprint 12"
-                  value={taskCycle}
-                  onChange={(e) => setTaskCycle(e.target.value)}
+                  placeholder="e.g. Update UI"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
                   className="input-base w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-text-primary">Client</label>
+                <MultiSelectDropdown 
+                  selected={client}
+                  onChange={setClient}
+                  placeholder="All Clients"
+                  options={clients}
+                  selectedSuffix="clients"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-text-primary">Project</label>
+                <MultiSelectDropdown 
+                  selected={project}
+                  onChange={setProject}
+                  placeholder="All Projects"
+                  options={projects}
+                  selectedSuffix="projects"
                 />
               </div>
             </div>

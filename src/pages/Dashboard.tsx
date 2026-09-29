@@ -39,6 +39,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: Page) => 
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' | null }>({ key: '', direction: null });
 
   const recentTickets = [
+    { id: '10-07', title: 'Inbound Customer Call - Sarah Connor', priority: 'High', status: 'Open', assignee: 'John Doe', brand: 'Acme Corp', project: 'Retail', tasks: 0, breach: false, src: 'phone', requestor: 'Sarah C.', created: 'Aug 16, 10:31' },
     { id: 'TKT-1088', title: 'Cannot access production database', priority: 'High', status: 'Open', assignee: 'John Doe', brand: 'Acme Corp', project: 'Internal IT', tasks: 3, breach: true, src: 'mail', requestor: 'Alice B.', created: 'Oct 24, 09:30' },
     { id: 'TKT-1089', title: 'API returning 500 errors', priority: 'Critical', status: 'In Progress', assignee: 'Jane Smith', brand: 'Globex', project: 'DevOps', tasks: 1, breach: false, src: 'phone', requestor: 'Bob S.', created: 'Oct 23, 14:15' },
     { id: 'TKT-1090', title: 'Update billing information', priority: 'Medium', status: 'Resolved', assignee: 'System', brand: 'Initech', project: 'Billing', tasks: 0, breach: false, src: 'desk', requestor: 'Charlie D.', created: 'Oct 22, 11:00' },

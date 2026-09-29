@@ -138,21 +138,21 @@ export function RichTextEditor({ content, onChange, placeholder = 'Type here...'
         heading: {
           levels: [1, 2, 3, 4, 5, 6],
         },
-      }),
-      Underline,
+      }) as any,
+      Underline as any,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
-      }),
+      }) as any,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
           class: 'text-brand-500 underline hover:text-brand-600 cursor-pointer',
         },
-      }),
+      }) as any,
       Placeholder.configure({
         placeholder,
         emptyEditorClass: 'is-editor-empty',
-      }),
+      }) as any,
     ],
     content,
     onUpdate: ({ editor }) => {

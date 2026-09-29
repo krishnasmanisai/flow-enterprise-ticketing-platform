@@ -8,22 +8,33 @@ import { SingleSearchDropdown } from '../components/ui/SingleSearchDropdown';
 import Pagination from '../components/ui/Pagination';
 
 const mockUsers = [
-  { id: 'EMP-1001', name: 'Ankita Verma', mobile: '9876543210', email: 'ankita.verma@example.com', manager: 'Rahul Singh', manager2: 'Priya Sharma', bu: 'Customer Support', sbu: 'Order Support', role: 'Manager', designation: 'Support Lead' },
-  { id: 'EMP-1002', name: 'Rahul Singh', mobile: '9123456780', email: 'rahul.s@example.com', manager: 'Priya Sharma', manager2: '', bu: 'Finance', sbu: 'Refunds', role: 'Agent', designation: 'Finance Agent' },
-  { id: 'EMP-1003', name: 'Priya Sharma', mobile: '9988776655', email: 'priya.s@example.com', manager: 'Amit Kumar', manager2: '', bu: 'Onboarding', sbu: 'KYC', role: 'Admin', designation: 'Onboarding Lead' },
-  { id: 'EMP-1004', name: 'Amit Kumar', mobile: '9001122334', email: 'amit.k@example.com', manager: '—', manager2: '', bu: 'Account Ops', sbu: 'Profile', role: 'Manager', designation: 'Ops Manager' },
-  { id: 'EMP-1005', name: 'Sumit Rawat', mobile: '8948985423', email: 'sumit.r@example.com', manager: 'Ankita Verma', manager2: '', bu: 'Customer Support', sbu: 'Tier 1', role: 'Agent', designation: 'Support Agent' },
-  { id: 'EMP-1006', name: 'Anoop M', mobile: '8953997805', email: 'anoop.m@example.com', manager: 'Priya Sharma', manager2: '', bu: 'Retail', sbu: 'Store Ops', role: 'Agent', designation: 'Retail Ops' },
-  { id: 'EMP-1007', name: 'Sujeet Singh', mobile: '9718982159', email: 'sujeet.s@example.com', manager: 'Amit Kumar', manager2: '', bu: 'Quality', sbu: 'Audit', role: 'Agent', designation: 'QA Agent' },
-  { id: 'EMP-1008', name: 'Mangesh Mistry', mobile: '9665958060', email: 'mangesh.m@example.com', manager: 'Rahul Singh', manager2: '', bu: 'Finance', sbu: 'Reporting', role: 'Viewer', designation: 'Analyst' },
-  { id: 'EMP-1009', name: 'Shlok Barot', mobile: '9665958060', email: 'shlok.b@example.com', manager: 'Ankita Verma', manager2: '', bu: 'Customer Support', sbu: 'Tier 2', role: 'Agent', designation: 'Support Escalation' },
-  { id: 'EMP-1010', name: 'Mani Sai', mobile: '9347917238', email: 'mani.s@example.com', manager: '—', manager2: '', bu: 'Leadership', sbu: 'Executive', role: 'Admin', designation: 'Exec' },
-  { id: 'EMP-1011', name: 'Jane Doe', mobile: '9876543211', email: 'jane.d@example.com', manager: 'Ankita Verma', manager2: '', bu: 'Customer Support', sbu: 'Tier 1', role: 'Agent', designation: 'Support Agent' },
-  { id: 'EMP-1012', name: 'John Smith', mobile: '9876543212', email: 'john.s@example.com', manager: 'Rahul Singh', manager2: '', bu: 'Finance', sbu: 'Reporting', role: 'Viewer', designation: 'Analyst' },
-  { id: 'EMP-1013', name: 'Alice Johnson', mobile: '9876543213', email: 'alice.j@example.com', manager: 'Priya Sharma', manager2: '', bu: 'Onboarding', sbu: 'KYC', role: 'Agent', designation: 'Onboarding Agent' },
-  { id: 'EMP-1014', name: 'Bob Williams', mobile: '9876543214', email: 'bob.w@example.com', manager: 'Amit Kumar', manager2: '', bu: 'Account Ops', sbu: 'Profile', role: 'Agent', designation: 'Ops Agent' },
-  { id: 'EMP-1015', name: 'Charlie Brown', mobile: '9876543215', email: 'charlie.b@example.com', manager: 'Mani Sai', manager2: '', bu: 'Leadership', sbu: 'Executive', role: 'Manager', designation: 'Director' }
+  { id: 'EMP-1001', name: 'Ankita Verma', mobile: '9876543210', email: 'ankita.verma@example.com', manager: 'Rahul Singh', manager2: 'Priya Sharma', tenantBu: 'Customer Experience', bu: 'Customer Support', sbu: 'Order Support', role: 'Manager', designation: 'Support Lead', status: 'Active' },
+  { id: 'EMP-1002', name: 'Rahul Singh', mobile: '9123456780', email: 'rahul.s@example.com', manager: 'Priya Sharma', manager2: '', tenantBu: 'Finance & Accounting', bu: 'Finance', sbu: 'Refunds', role: 'Agent', designation: 'Finance Agent', status: 'Active' },
+  { id: 'EMP-1003', name: 'Priya Sharma', mobile: '9988776655', email: 'priya.s@example.com', manager: 'Amit Kumar', manager2: '', tenantBu: 'Customer Experience', bu: 'Onboarding', sbu: 'KYC', role: 'Admin', designation: 'Onboarding Lead', status: 'Active' },
+  { id: 'EMP-1004', name: 'Amit Kumar', mobile: '9001122334', email: 'amit.k@example.com', manager: '—', manager2: '', tenantBu: 'Operations & Logistics', bu: 'Account Ops', sbu: 'Profile', role: 'Manager', designation: 'Ops Manager', status: 'Active' },
+  { id: 'EMP-1005', name: 'Sumit Rawat', mobile: '8948985423', email: 'sumit.r@example.com', manager: 'Ankita Verma', manager2: '', tenantBu: 'Customer Experience', bu: 'Customer Support', sbu: 'Tier 1', role: 'Agent', designation: 'Support Agent', status: 'Active' },
+  { id: 'EMP-1006', name: 'Anoop M', mobile: '8953997805', email: 'anoop.m@example.com', manager: 'Priya Sharma', manager2: '', tenantBu: 'Retail Commerce', bu: 'Retail', sbu: 'Store Ops', role: 'Agent', designation: 'Retail Ops', status: 'Active' },
+  { id: 'EMP-1007', name: 'Sujeet Singh', mobile: '9718982159', email: 'sujeet.s@example.com', manager: 'Amit Kumar', manager2: '', tenantBu: 'IT & Technology', bu: 'Quality', sbu: 'Audit', role: 'Agent', designation: 'QA Agent', status: 'Inactive' },
+  { id: 'EMP-1008', name: 'Mangesh Mistry', mobile: '9665958060', email: 'mangesh.m@example.com', manager: 'Rahul Singh', manager2: '', tenantBu: 'Finance & Accounting', bu: 'Finance', sbu: 'Reporting', role: 'Viewer', designation: 'Analyst', status: 'Active' },
+  { id: 'EMP-1009', name: 'Shlok Barot', mobile: '9665958060', email: 'shlok.b@example.com', manager: 'Ankita Verma', manager2: '', tenantBu: 'Customer Experience', bu: 'Customer Support', sbu: 'Tier 2', role: 'Agent', designation: 'Support Escalation', status: 'Active' },
+  { id: 'EMP-1010', name: 'Mani Sai', mobile: '9347917238', email: 'mani.s@example.com', manager: '—', manager2: '', tenantBu: 'Corporate Services', bu: 'Leadership', sbu: 'Executive', role: 'Admin', designation: 'Exec', status: 'Active' },
+  { id: 'EMP-1011', name: 'Jane Doe', mobile: '9876543211', email: 'jane.d@example.com', manager: 'Ankita Verma', manager2: '', tenantBu: 'Customer Experience', bu: 'Customer Support', sbu: 'Tier 1', role: 'Agent', designation: 'Support Agent', status: 'Inactive' },
+  { id: 'EMP-1012', name: 'John Smith', mobile: '9876543212', email: 'john.s@example.com', manager: 'Rahul Singh', manager2: '', tenantBu: 'Finance & Accounting', bu: 'Finance', sbu: 'Reporting', role: 'Viewer', designation: 'Analyst', status: 'Active' },
+  { id: 'EMP-1013', name: 'Alice Johnson', mobile: '9876543213', email: 'alice.j@example.com', manager: 'Priya Sharma', manager2: '', tenantBu: 'Customer Experience', bu: 'Onboarding', sbu: 'KYC', role: 'Agent', designation: 'Onboarding Agent', status: 'Active' },
+  { id: 'EMP-1014', name: 'Bob Williams', mobile: '9876543214', email: 'bob.w@example.com', manager: 'Amit Kumar', manager2: '', tenantBu: 'Operations & Logistics', bu: 'Account Ops', sbu: 'Profile', role: 'Agent', designation: 'Ops Agent', status: 'Active' },
+  { id: 'EMP-1015', name: 'Charlie Brown', mobile: '9876543215', email: 'charlie.b@example.com', manager: 'Mani Sai', manager2: '', tenantBu: 'Corporate Services', bu: 'Leadership', sbu: 'Executive', role: 'Manager', designation: 'Director', status: 'Active' }
 ];
+
+const TENANT_BUS = [
+  'Customer Experience',
+  'Finance & Accounting',
+  'IT & Technology',
+  'Operations & Logistics',
+  'Retail Commerce',
+  'Corporate Services'
+];
+
+const STATUS_OPTIONS = ['Active', 'Inactive'];
 
 const BU_SBU_MAP: Record<string, string[]> = {
   'Customer Support': ['Order Support', 'Refunds', 'Tier 1', 'Tier 2', 'Support Escalation'],
@@ -79,7 +90,9 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
       u.name.toLowerCase().includes(s) || 
       u.id.toLowerCase().includes(s) ||
       u.email.toLowerCase().includes(s) ||
-      u.mobile.includes(s)
+      u.mobile.includes(s) ||
+      (u.tenantBu && u.tenantBu.toLowerCase().includes(s)) ||
+      (u.status && u.status.toLowerCase().includes(s))
     );
   }, [users, search]);
   
@@ -107,7 +120,18 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
   const handleCreate = () => {
     setEditingUser(null);
     setFormData({
-      id: '', name: '', mobile: '', email: '', designation: '', role: '', manager: '', manager2: '', bu: '', sbu: ''
+      id: '', 
+      name: '', 
+      mobile: '', 
+      email: '', 
+      designation: '', 
+      role: '', 
+      manager: '', 
+      manager2: '', 
+      tenantBu: '', 
+      bu: '', 
+      sbu: '',
+      status: 'Active'
     });
     setErrors({});
     setIsDrawerOpen(true);
@@ -115,7 +139,11 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
 
   const handleEdit = (user: any) => {
     setEditingUser(user);
-    setFormData({ ...user });
+    setFormData({ 
+      ...user,
+      tenantBu: user.tenantBu || '',
+      status: user.status || 'Active'
+    });
     setErrors({});
     setIsDrawerOpen(true);
   };
@@ -139,6 +167,7 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
     if (!formData.id?.trim()) newErrors.id = 'Employee ID is required';
     if (!formData.name?.trim()) newErrors.name = 'User Name is required';
     if (!formData.role?.trim()) newErrors.role = 'Role is required';
+    if (!formData.tenantBu?.trim()) newErrors.tenantBu = 'Tenant Business Unit is required';
     if (!formData.bu?.trim()) newErrors.bu = 'Business Unit is required';
     if (!formData.sbu?.trim()) newErrors.sbu = 'Sub Business Unit is required';
     
@@ -248,14 +277,16 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">User Name</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Mobile Number</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Reporting Manager</th>
+                    <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Tenant BU</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Business Unit</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Sub Business Unit</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Role</th>
+                    <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider">Status</th>
                     <th className="px-4 py-3 text-[10px] font-semibold text-text-muted uppercase tracking-wider text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-subtle">
-                  {paginatedUsers.map((user, index) => (
+                  {paginatedUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-bg-surface-hover transition-colors group">
                       <td className="px-4 py-3"><span className="text-xs font-mono text-text-secondary">{user.id}</span></td>
                       <td className="px-4 py-3">
@@ -266,10 +297,16 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
                       </td>
                       <td className="px-4 py-3 text-sm text-text-secondary">{user.mobile || '—'}</td>
                       <td className="px-4 py-3 text-sm text-text-secondary">{user.manager || '—'}</td>
+                      <td className="px-4 py-3 text-sm text-text-secondary">{user.tenantBu || '—'}</td>
                       <td className="px-4 py-3 text-sm text-text-secondary">{user.bu}</td>
                       <td className="px-4 py-3 text-sm text-text-secondary">{user.sbu}</td>
                       <td className="px-4 py-3">
                         <Badge variant={getRoleBadgeVariant(user.role) as any} className="py-1 px-2 text-[10px] uppercase tracking-wider font-bold">{user.role}</Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={user.status === 'Inactive' ? 'neutral' : 'success'} className="py-0.5 px-2 text-[10px] font-semibold">
+                          {user.status || 'Active'}
+                        </Badge>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-3 text-text-muted">
@@ -287,20 +324,25 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
               </table>
 
               <div className="md:hidden flex flex-col gap-3 p-4 bg-bg-page">
-                {paginatedUsers.map((user, index) => (
+                {paginatedUsers.map((user) => (
                   <div key={user.id} className="bg-bg-surface border border-border-default rounded-lg p-4 shadow-sm flex flex-col gap-3">
                     <div className="flex justify-between items-start">
                       <div className="flex flex-col gap-1">
                         <span className="text-sm font-semibold text-text-primary">{user.name}</span>
                         <span className="text-[11px] text-text-muted">{user.email}</span>
                       </div>
-                      <Badge variant={getRoleBadgeVariant(user.role) as any} className="py-1 px-2 text-[10px] uppercase tracking-wider font-bold">
-                        {user.role}
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant={user.status === 'Inactive' ? 'neutral' : 'success'} className="py-0.5 px-1.5 text-[9px] font-semibold">
+                          {user.status || 'Active'}
+                        </Badge>
+                        <Badge variant={getRoleBadgeVariant(user.role) as any} className="py-1 px-2 text-[10px] uppercase tracking-wider font-bold">
+                          {user.role}
+                        </Badge>
+                      </div>
                     </div>
                     <div className="flex justify-between items-center text-xs text-text-secondary">
                       <span className="font-mono text-text-secondary">{user.id}</span>
-                      <span>{user.bu} • {user.sbu}</span>
+                      <span className="text-right truncate max-w-[200px]">{user.tenantBu ? `${user.tenantBu} • ` : ''}{user.bu}</span>
                     </div>
                     <div className="flex justify-between items-center mt-2 pt-2 border-t border-border-subtle">
                       <span className="text-xs text-text-secondary">Manager: {user.manager || '—'}</span>
@@ -469,6 +511,21 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
                       className="px-3 py-2 bg-bg-page border border-border-default rounded-md text-sm text-text-primary shadow-sm hover:border-border-strong"
                     />
                   </div>
+
+                  <div className="space-y-1.5 flex flex-col sm:col-span-2">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wide">Tenant Business Unit *</label>
+                    <SingleSearchDropdown 
+                      options={TENANT_BUS}
+                      value={formData.tenantBu || ''}
+                      onChange={(val) => {
+                        setFormData({...formData, tenantBu: val});
+                        if (errors.tenantBu) setErrors({...errors, tenantBu: ''});
+                      }}
+                      placeholder="Select tenant business unit"
+                      className={'px-3 py-2 bg-bg-page border ' + (errors.tenantBu ? 'border-error-text' : 'border-border-default') + ' rounded-md text-sm text-text-primary shadow-sm hover:border-border-strong'}
+                    />
+                    {errors.tenantBu && <p className="text-[10px] text-error-text font-medium">{errors.tenantBu}</p>}
+                  </div>
                   
                   <div className="space-y-1.5 flex flex-col">
                     <label className="text-xs font-bold text-text-secondary uppercase tracking-wide">Business Unit *</label>
@@ -498,6 +555,24 @@ export default function InternalUsers({ onNavigate }: { onNavigate: (page: Page)
                       className={'px-3 py-2 bg-bg-page border ' + (errors.sbu ? 'border-error-text' : 'border-border-default') + ' rounded-md text-sm text-text-primary shadow-sm hover:border-border-strong'}
                     />
                     {errors.sbu && <p className="text-[10px] text-error-text font-medium">{errors.sbu}</p>}
+                  </div>
+                </div>
+              </section>
+
+              {/* Account Status */}
+              <section className="space-y-4">
+                <h3 className="text-sm font-semibold text-text-primary border-b border-border-subtle pb-2 uppercase tracking-wider">Account Status</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
+                  <div className="space-y-1.5 flex flex-col sm:col-span-2">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wide">Status</label>
+                    <SingleSearchDropdown 
+                      options={STATUS_OPTIONS}
+                      value={formData.status || 'Active'}
+                      onChange={(val) => setFormData({...formData, status: val})}
+                      placeholder="Select status"
+                      className="px-3 py-2 bg-bg-page border border-border-default rounded-md text-sm text-text-primary shadow-sm hover:border-border-strong"
+                    />
+                    <p className="text-[11px] text-text-muted mt-0.5">Active users can access the system, receive assignments, and log actions. Inactive accounts cannot log in.</p>
                   </div>
                 </div>
               </section>

@@ -1,185 +1,393 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { 
-  ArrowLeft, Check, ChevronDown, MessageSquare, AlertTriangle, 
-  RefreshCw, Bold, Italic, Underline, Strikethrough, Link, Code, 
-  Plus, Edit3, Trash2
+  ArrowLeft, Check, AlertCircle
 } from 'lucide-react';
 import { Page } from '../types';
-import { RichTextEditor } from '../components/ui/RichTextEditor';
 import { Button } from '../components/ui/Button';
-import { SearchableSelect } from '../components/ui/SearchableSelect';
+import { 
+  ReactFlow, 
+  Controls, 
+  Background, 
+  useNodesState, 
+  useEdgesState,
+  addEdge,
+  Connection,
+  Edge,
+  Node
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { CustomNode } from '../components/workflow/Nodes';
+import { CustomEdge } from '../components/workflow/Edges';
+import { ConfigPanel } from '../components/workflow/ConfigPanel';
+import { triggers, actions } from '../lib/workflow/registry';
+
+const initialNodes: Node[] = [
+  {
+    id: '1',
+    type: 'trigger',
+    position: { x: 250, y: 50 },
+    data: { label: 'New Ticket Created', sublabel: 'Request Type = "Flat Accrual"', config: { event: 'New Ticket Created', conditions: [{field: 'requestType', op: '==', val: 'Flat Accrual'}] } }
+  },
+  {
+    id: '2',
+    type: 'api_call',
+    position: { x: 250, y: 150 },
+    data: { label: 'Get Customer Profile', sublabel: 'Returns customerType', config: { method: 'GET', url: 'https://api.example.com/profile?email={{ticket.customerEmail}}', responseMapping: [{path: '$.data.customerType', varName: 'customerType'}] } }
+  },
+  {
+    id: '3',
+    type: 'condition',
+    position: { x: 250, y: 250 },
+    data: { label: 'Customer Type Check', sublabel: 'customerType == "Non-Loyalty"', config: { logicOperator: 'AND', conditions: [{field: 'customerType', op: '==', val: 'Non-Loyalty'}] } }
+  },
+  {
+    id: '4',
+    type: 'api_call',
+    position: { x: 50, y: 350 },
+    data: { label: 'Update Profile', sublabel: 'Sets to Loyalty', config: { method: 'POST', url: 'https://api.example.com/profile/update', body: '{\n  "email": "{{ticket.customerEmail}}",\n  "type": "Loyalty"\n}' } }
+  },
+  {
+    id: '5',
+    type: 'api_call',
+    position: { x: 250, y: 450 },
+    data: { label: 'Credit Points', sublabel: 'Returns accrualStatus', config: { method: 'POST', url: 'https://api.example.com/points/credit', body: '{\n  "amount": 500\n}', responseMapping: [{path: '$.data.status', varName: 'accrualStatus'}] } }
+  },
+  {
+    id: '6',
+    type: 'condition',
+    position: { x: 250, y: 550 },
+    data: { label: 'Accrual Status', sublabel: 'accrualStatus == "success"', config: { logicOperator: 'AND', conditions: [{field: 'accrualStatus', op: '==', val: 'success'}] } }
+  },
+  {
+    id: '7',
+    type: 'send_communication',
+    position: { x: 50, y: 650 },
+    data: { label: 'Send Confirmation', sublabel: 'Auto-reply to customer', config: { sendTo: '{{ticket.customerEmail}}', channel: 'Email', subject: 'Points Credited', body: '<p>Your points have been credited successfully.</p>' } }
+  },
+  {
+    id: '8',
+    type: 'add_comment',
+    position: { x: 450, y: 650 },
+    data: { label: 'Add Internal Comment', sublabel: 'Attach context', config: { attachContext: true, comment: '<p>Escalating due to failed accrual.</p>' } }
+  },
+  {
+    id: '9',
+    type: 'update_ticket',
+    position: { x: 450, y: 750 },
+    data: { label: 'Route to Ops', sublabel: 'Change status', config: { updates: [{field: 'status', value: 'Pending Ops'}] } }
+  }
+];
+
+const initialEdges: Edge[] = [
+  { id: 'e1-2', source: '1', target: '2', sourceHandle: 'default', type: 'custom' },
+  { id: 'e2-3', source: '2', target: '3', sourceHandle: 'default', type: 'custom' },
+  { id: 'e3-4', source: '3', target: '4', sourceHandle: 'true', type: 'custom' },
+  { id: 'e3-5', source: '3', target: '5', sourceHandle: 'false', type: 'custom' },
+  { id: 'e4-5', source: '4', target: '5', sourceHandle: 'default', type: 'custom' }, 
+  { id: 'e5-6', source: '5', target: '6', sourceHandle: 'default', type: 'custom' },
+  { id: 'e6-7', source: '6', target: '7', sourceHandle: 'true', type: 'custom' },
+  { id: 'e6-8', source: '6', target: '8', sourceHandle: 'false', type: 'custom' },
+  { id: 'e8-9', source: '8', target: '9', sourceHandle: 'default', type: 'custom' }
+];
 
 export default function EditWorkflow({ onNavigate }: { onNavigate: (page: Page) => void }) {
-  const [activeStep, setActiveStep] = useState(3);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [draggedType, setDraggedType] = useState<string | null>(null);
+
+  const nodeTypes = useMemo(() => ({
+    trigger: CustomNode, api_call: CustomNode, condition: CustomNode, switch: CustomNode, loop: CustomNode, merge: CustomNode,
+    send_communication: CustomNode, send_notification: CustomNode, update_ticket: CustomNode, add_comment: CustomNode, create_task: CustomNode
+  }), []);
+
+  const edgeTypes = useMemo(() => ({
+    custom: CustomEdge
+  }), []);
+
+  const getAvailableVariables = () => {
+    // Collect variables from trigger and upstream api calls
+    // Real implementation would traverse DAG.
+    const vars = ['ticket.id', 'ticket.customerEmail', 'ticket.status', 'ticket.requestType'];
+    nodes.forEach(n => {
+      if (n.type === 'api_call' && (n.data as any).config?.responseMapping) {
+        (n.data as any).config.responseMapping.forEach((m: any) => {
+          if (m.varName) vars.push(m.varName);
+        });
+      }
+    });
+    return vars;
+  };
+
+  const contextVariables = getAvailableVariables();
+
+  const handleNodeDelete = useCallback((id: string) => {
+    setNodes((nds) => nds.filter((n) => n.id !== id));
+    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
+    if (selectedNodeId === id) setSelectedNodeId(null);
+  }, [setNodes, setEdges, selectedNodeId]);
+
+  // Inject onDelete into node data
+  const nodesWithActions = nodes.map(n => ({
+    ...n,
+    data: {
+      ...n.data,
+      onDelete: handleNodeDelete
+    }
+  }));
+
+  const handleEdgeDelete = useCallback((id: string) => {
+    setEdges((eds) => eds.filter((e) => e.id !== id));
+  }, [setEdges]);
+
+  const handleEdgeInsert = useCallback((edgeId: string) => {
+    // Splicing a generic API Call node into the edge
+    const edge = edges.find(e => e.id === edgeId);
+    if (!edge) return;
+
+    const sourceNode = nodes.find(n => n.id === edge.source);
+    const targetNode = nodes.find(n => n.id === edge.target);
+    if (!sourceNode || !targetNode) return;
+
+    const newNodeId = `node_${Date.now()}`;
+    const newY = sourceNode.position.y + (targetNode.position.y - sourceNode.position.y) / 2;
+    const newX = sourceNode.position.x + (targetNode.position.x - sourceNode.position.x) / 2;
+    
+    const newNode = {
+      id: newNodeId,
+      type: 'api_call',
+      position: { x: newX, y: newY },
+      data: { label: 'New Action', config: {} }
+    };
+
+    const edge1 = { id: `e_${edge.source}_${newNodeId}`, source: edge.source, target: newNodeId, sourceHandle: edge.sourceHandle, type: 'custom' };
+    const edge2 = { id: `e_${newNodeId}_${edge.target}`, source: newNodeId, target: edge.target, sourceHandle: 'default', type: 'custom' };
+
+    setNodes((nds) => [...nds, newNode]);
+    setEdges((eds) => [...eds.filter(e => e.id !== edgeId), edge1, edge2]);
+    setSelectedNodeId(newNodeId);
+  }, [edges, nodes, setNodes, setEdges]);
+
+  // Inject callbacks into edge data
+  const edgesWithActions = edges.map(e => ({
+    ...e,
+    data: {
+      ...e.data,
+      onDelete: handleEdgeDelete,
+      onInsert: handleEdgeInsert
+    }
+  }));
+
+  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge({...params, type: 'custom'}, eds)), [setEdges]);
+
+  const onNodeClick = (_: React.MouseEvent, node: Node) => {
+    setSelectedNodeId(node.id);
+    setValidationError(null);
+  };
+
+  const updateNodeData = (id: string, newConfig?: any, newLabel?: string, newType?: string) => {
+    setNodes((nds) => nds.map(n => {
+      if (n.id === id) {
+        return {
+          ...n,
+          type: newType || n.type,
+          data: {
+            ...n.data,
+            label: newLabel !== undefined ? newLabel : n.data.label,
+            config: newConfig !== undefined ? newConfig : n.data.config
+          }
+        };
+      }
+      return n;
+    }));
+  };
+
+  const validateAndPublish = () => {
+    for (const node of nodes) {
+      if (node.type === 'condition') {
+        const hasConds = (node.data as any).config?.conditions?.length > 0;
+        if (!hasConds || !(node.data as any).config.conditions[0].field) {
+          setValidationError(`Node "${node.data.label}" has incomplete conditions.`);
+          setSelectedNodeId(node.id);
+          return;
+        }
+        // Check routing
+        const hasTrue = edges.some(e => e.source === node.id && e.sourceHandle === 'true');
+        const hasFalse = edges.some(e => e.source === node.id && e.sourceHandle === 'false');
+        if (!hasTrue && !hasFalse) {
+          setValidationError(`Node "${node.data.label}" has no branches routed.`);
+          setSelectedNodeId(node.id);
+          return;
+        }
+      }
+      if (node.type === 'api_call') {
+        if (!(node.data as any).config?.url) {
+          setValidationError(`Node "${node.data.label}" is missing a URL.`);
+          setSelectedNodeId(node.id);
+          return;
+        }
+      }
+    }
+    // Reachability check (simple BFS)
+    const trigger = nodes.find(n => n.type === 'trigger');
+    if (!trigger) {
+      setValidationError("Workflow must have exactly one Trigger node.");
+      return;
+    }
+    const visited = new Set<string>();
+    const queue = [trigger.id];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      visited.add(current);
+      edges.filter(e => e.source === current).forEach(e => {
+        if (!visited.has(e.target)) queue.push(e.target);
+      });
+    }
+    const unreachable = nodes.find(n => !visited.has(n.id));
+    if (unreachable) {
+      setValidationError(`Node "${unreachable.data.label}" is unreachable.`);
+      setSelectedNodeId(unreachable.id);
+      return;
+    }
+
+    setValidationError(null);
+    alert('Workflow published successfully!');
+    onNavigate('workflows');
+  };
+
+  const onDragStart = (event: any, nodeType: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+    setDraggedType(nodeType);
+  };
+
+  const onDragOver = useCallback((event: any) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback((event: any) => {
+    event.preventDefault();
+    const type = event.dataTransfer.getData('application/reactflow');
+    if (!type) return;
+
+    // We don't have reactFlowInstance ref to accurately project coords without useReactFlow wrapper,
+    // so we approximate for the center. Real implementation uses reactFlowInstance.screenToFlowPosition
+    const newNodeId = `node_${Date.now()}`;
+    const newNode = {
+      id: newNodeId,
+      type,
+      position: { x: event.clientX - 300, y: event.clientY - 100 },
+      data: { label: `New ${type.replace('_', ' ')}`, config: {} }
+    };
+    setNodes((nds) => nds.concat(newNode));
+    setSelectedNodeId(newNodeId);
+  }, [setNodes]);
+
+  const selectedNode = nodes.find(n => n.id === selectedNodeId);
 
   return (
-    <div className="flex flex-col w-full bg-bg-page">
+    <div className="flex flex-col w-full h-full bg-bg-page relative">
       {/* Header */}
-      <div className="bg-bg-surface border-b border-border-default sticky top-0 z-20 px-6 py-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-sm">
+      <div className="bg-bg-surface border-b border-border-default sticky top-0 z-20 px-6 py-4 flex justify-between items-center shadow-sm shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => onNavigate('workflows')} className="text-text-secondary hover:text-text-primary transition-colors p-1.5 -ml-1.5 rounded hover:bg-bg-surface-hover">
             <ArrowLeft size={18} />
           </button>
-          <div className="w-px h-5 bg-border-default hidden sm:block"></div>
+          <div className="w-px h-5 bg-border-default"></div>
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[10px] font-mono font-semibold text-success-text uppercase tracking-widest bg-success-bg px-2 py-0.5 rounded border border-success-text/20">Active</span>
+              <span className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-widest bg-bg-page px-2 py-0.5 rounded border border-border-default">Draft</span>
             </div>
-            <h1 className="text-lg font-semibold text-text-primary">Auto-update Status when reply received</h1>
+            <h1 className="text-lg font-semibold text-text-primary">Flat Accrual Automation</h1>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="md">Cancel</Button>
-          <Button variant="primary" size="md" icon={Check}>Save Workflow</Button>
+        <div className="flex items-center gap-4">
+          {validationError && (
+            <div className="flex items-center gap-2 text-error-text text-sm bg-error-bg px-3 py-1.5 rounded-md border border-error-text/20">
+              <AlertCircle size={16} />
+              <span className="font-medium">{validationError}</span>
+            </div>
+          )}
+          <Button variant="outline" size="md">Test Run</Button>
+          <Button variant="outline" size="md">Save Draft</Button>
+          <Button variant="primary" size="md" icon={Check} onClick={validateAndPublish}>Publish</Button>
         </div>
       </div>
 
-      <div className="flex">
-        {/* Left Progress Rail */}
-        <div className="w-64 border-r border-border-default bg-bg-surface p-6 hidden md:block">
-          <h3 className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-6">Workflow Steps</h3>
-          
-          <div className="relative before:content-[''] before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-px before:bg-border-default">
-            
-            <div className="flex items-start gap-3 mb-8 relative">
-              <div className="w-7 h-7 rounded-full bg-bg-surface border-2 border-brand-500 text-brand-500 flex items-center justify-center shrink-0 z-10 font-bold text-xs bg-bg-surface shadow-sm">
-                <Check size={14} strokeWidth={3} />
-              </div>
-              <div className="pt-1.5">
-                <div className="font-semibold text-sm text-text-primary mb-1">Workflow Details</div>
-                <div className="text-xs text-text-secondary">Name & Description</div>
-              </div>
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Palette */}
+        <div className="w-64 border-r border-border-default bg-bg-surface flex flex-col shrink-0 z-10 h-full">
+          <div className="p-4 border-b border-border-default font-semibold text-sm">Node Palette</div>
+          <div className="p-4 space-y-4 overflow-y-auto">
+            <div>
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-2">Triggers</div>
+              <div 
+                className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page"
+                draggable onDragStart={(e) => onDragStart(e, 'trigger')}
+              >New Ticket Created</div>
+              <div 
+                className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page mt-2"
+                draggable onDragStart={(e) => onDragStart(e, 'trigger')}
+              >Ticket Updated</div>
             </div>
-
-            <div className="flex items-start gap-3 mb-8 relative">
-              <div className="w-7 h-7 rounded-full bg-bg-surface border-2 border-brand-500 text-brand-500 flex items-center justify-center shrink-0 z-10 font-bold text-xs bg-bg-surface shadow-sm">
-                <Check size={14} strokeWidth={3} />
-              </div>
-              <div className="pt-1.5">
-                <div className="font-semibold text-sm text-text-primary mb-1">Trigger Details</div>
-                <div className="text-xs text-text-secondary">When to execute</div>
-              </div>
+            <div>
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-2 mt-4">Logic</div>
+              <div className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page" draggable onDragStart={(e) => onDragStart(e, 'condition')}>Condition / Switch</div>
+              <div className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page mt-2" draggable onDragStart={(e) => onDragStart(e, 'loop')}>Loop</div>
+              <div className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page mt-2" draggable onDragStart={(e) => onDragStart(e, 'merge')}>Merge</div>
             </div>
-
-            <div className="flex items-start gap-3 mb-8 relative">
-              <div className="w-7 h-7 rounded-full bg-brand-500 border-2 border-brand-500 text-bg-surface flex items-center justify-center shrink-0 z-10 font-bold text-xs shadow-sm">
-                3
-              </div>
-              <div className="pt-1.5">
-                <div className="font-semibold text-sm text-text-primary mb-1">Actions</div>
-                <div className="text-xs text-text-secondary">What to do</div>
-              </div>
+            <div>
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest mb-2 mt-4">Actions</div>
+              {actions.map(action => (
+                <div 
+                  key={action}
+                  className="p-2 border border-border-default rounded text-sm hover:border-brand-500 cursor-grab bg-bg-page mt-2" 
+                  draggable onDragStart={(e) => onDragStart(e, action.toLowerCase().replace(' ', '_'))}
+                >{action}</div>
+              ))}
             </div>
-            
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 p-6 lg:p-8">
-          <div className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-6">
-            
-            {/* Action Configuration Panel */}
-            <div className="flex-1 card-base flex flex-col border-border-default">
-              <div className="flex border-b border-border-default bg-bg-page overflow-x-auto custom-scrollbar">
-                <button className="px-5 py-3 border-b-2 border-brand-500 text-text-primary text-sm font-semibold whitespace-nowrap bg-bg-surface flex items-center gap-2">
-                  <MessageSquare size={16} /> Communication
-                </button>
-                <button className="px-5 py-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
-                  <AlertTriangle size={16} /> Notification
-                </button>
-                <button className="px-5 py-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
-                  <RefreshCw size={16} /> Update Ticket
-                </button>
-              </div>
-              
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-[13px] font-semibold text-text-primary mb-1.5">
-                    Send To <span className="text-error-text">*</span>
-                  </label>
-                  <SearchableSelect 
-                    value="Customer Email"
-                    onChange={() => {}}
-                    placeholder="Select Send To"
-                    options={[
-                      { label: 'Select Send To', value: '' },
-                      { label: 'Customer Email', value: 'Customer Email' }
-                    ]}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-[13px] font-semibold text-text-primary mb-1.5">
-                    Email Subject <span className="text-error-text">*</span>
-                  </label>
-                  <input type="text" defaultValue="{{TicketId}}" className="input-base w-full h-10 font-mono text-sm" />
-                  <p className="text-xs text-text-secondary mt-2 flex items-start gap-1.5">
-                    <AlertTriangle className="w-4 h-4 text-warning-text shrink-0 mt-0.5" /> 
-                    <span>Include your own words in the subject, not only <span className="bg-bg-page border border-border-default px-1.5 py-0.5 rounded font-mono">{"{{TicketId}}"}</span>.</span>
-                  </p>
-                </div>
-                
-                <div>
-                  <label className="block text-[13px] font-semibold text-text-primary mb-1.5">
-                    Body <span className="text-error-text">*</span>
-                  </label>
-                  <RichTextEditor content="" onChange={() => {}} placeholder="Type your message..." minHeight="min-h-[192px]" />
-                </div>
-              </div>
-            </div>
-
-            {/* Right Action Sequence Panel */}
-            <div className="w-full lg:w-[320px] shrink-0 card-base p-6 h-fit bg-bg-surface">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[11px] font-semibold text-text-secondary uppercase tracking-widest">Action Sequence</h3>
-                <span className="bg-bg-page border border-border-default text-text-primary px-2 py-0.5 rounded text-[10px] font-bold font-mono">2 STEPS</span>
-              </div>
-              
-              <div className="space-y-4 relative before:content-[''] before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-px before:bg-border-default before:-z-10">
-                {/* Step 1 */}
-                <div className="flex gap-4 items-center">
-                  <div className="w-7 h-7 rounded-full bg-bg-page border border-border-default text-text-secondary font-bold text-xs flex items-center justify-center shrink-0 shadow-sm z-10">1</div>
-                  <div className="flex-1 bg-bg-surface border border-border-default rounded-md px-3 py-2.5 flex items-center gap-2 shadow-sm">
-                    <Code size={14} className="text-text-muted" />
-                    <span className="font-semibold text-sm text-text-primary">Apicall</span>
-                  </div>
-                </div>
-                
-                {/* Step 2 (Active) */}
-                <div className="flex gap-4 items-center">
-                  <div className="w-7 h-7 rounded-full bg-brand-500 text-bg-surface font-bold text-xs flex items-center justify-center shrink-0 shadow-sm z-10">2</div>
-                  <div className="flex-1 bg-bg-surface border border-brand-500 rounded-md p-2.5 flex justify-between items-center shadow-sm relative">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-500 rounded-l-sm"></div>
-                    <div className="flex gap-2.5 items-center pl-1">
-                      <RefreshCw size={14} className="text-brand-500" />
-                      <div>
-                        <div className="font-semibold text-sm text-text-primary">Update...</div>
-                        <div className="text-[11px] text-text-secondary mt-0.5">Status: <span className="font-medium text-text-primary">Resolved</span></div>
-                      </div>
-                    </div>
-                    <div className="flex gap-1 text-text-muted">
-                      <button className="hover:text-brand-500 p-1 rounded hover:bg-bg-surface-hover"><Edit3 size={14} /></button>
-                      <button className="hover:text-error-text p-1 rounded hover:bg-error-bg"><Trash2 size={14} /></button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Add Action Button */}
-                <div className="flex gap-4 items-center pt-2">
-                  <div className="w-7 h-7 rounded-full bg-bg-surface border-2 border-dashed border-border-strong text-text-muted flex items-center justify-center shrink-0 z-10">
-                    <Plus size={14} />
-                  </div>
-                  <button className="flex-1 bg-bg-surface border-2 border-dashed border-border-default hover:border-border-strong rounded-md py-2.5 text-[13px] font-semibold text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-2">
-                    <Plus size={14} /> Add Action Here
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-          </div>
+        {/* Canvas */}
+        <div className="flex-1 relative h-full">
+          <ReactFlow 
+            nodes={nodesWithActions}
+            edges={edgesWithActions}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onPaneClick={() => setSelectedNodeId(null)}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            defaultEdgeOptions={{ type: 'custom' }}
+            fitView
+            className="bg-bg-page"
+            deleteKeyCode={['Backspace', 'Delete']}
+          >
+            <Background color="#ccc" gap={16} />
+            <Controls />
+          </ReactFlow>
         </div>
+
+        {/* Right Config Panel */}
+        {selectedNode && (
+          <ConfigPanel 
+            key={selectedNode.id} // Forces unmount/remount on selection change! Prevents stale data.
+            node={selectedNode} 
+            updateNode={updateNodeData} 
+            onClose={() => setSelectedNodeId(null)} 
+            contextVariables={contextVariables}
+          />
+        )}
       </div>
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Filter, MoreHorizontal, Activity, ArrowLeft } from 'lucide-react';
+import { Search, Plus, Filter, MoreHorizontal, Activity, ArrowLeft, Copy, Download, Trash2, Edit } from 'lucide-react';
 import { Page } from '../types';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -8,34 +8,16 @@ export default function Workflows({ onNavigate }: { onNavigate: (page: Page) => 
   const [activeTab, setActiveTab] = useState('All');
 
   const workflows = [
-    { name: '72 Hours Auto closure', status: 'Active', description: 'Ticket will be Auto closed post 72 hours of no response from Customer', executions: 26, createdOn: '26 May 2026' },
-    { name: 'GMB flow', status: 'Active', description: 'GMB flow integration setup', executions: 1, createdOn: '30 Jan 2026' },
-    { name: 'SLA WFA', status: 'Active', description: 'SLA automated warning generation', executions: 3, createdOn: '15 May 2026' },
-    { name: 'Auto-update Status', status: 'Active', description: 'Automatically changes ticket status from New to Pending when a ticket from VIP is received.', executions: 4, createdOn: '12 May 2026' },
-    { name: 'Copy_of_Leadhub', status: 'Draft', description: 'Leadhub clone', executions: 0, createdOn: '10 May 2026' },
-    { name: 'Status change when reply', status: 'Inactive', description: 'Status change when customer response received', executions: 12, createdOn: '05 May 2026' },
+    { name: 'Flat Accrual Automation', status: 'Active', trigger: 'New Ticket Created', executions: 1254, createdOn: '26 May 2026', createdBy: 'Jane Doe', lastModified: '15 Aug 2026' },
+    { name: '72 Hours Auto closure', status: 'Active', trigger: 'Time-Based (Cron)', executions: 4200, createdOn: '26 May 2026', createdBy: 'System', lastModified: '10 Aug 2026' },
+    { name: 'SLA WFA', status: 'Active', trigger: 'SLA Breach', executions: 342, createdOn: '15 May 2026', createdBy: 'Alice Smith', lastModified: '12 Jul 2026' },
+    { name: 'Auto-update VIP Status', status: 'Active', trigger: 'New Ticket Created', executions: 89, createdOn: '12 May 2026', createdBy: 'Bob Jones', lastModified: '01 Jun 2026' },
+    { name: 'Copy_of_Leadhub', status: 'Draft', trigger: 'Ticket Updated', executions: 0, createdOn: '10 May 2026', createdBy: 'Jane Doe', lastModified: '10 May 2026' },
+    { name: 'Status change when reply', status: 'Inactive', trigger: 'Customer Reply Received', executions: 840, createdOn: '05 May 2026', createdBy: 'Jane Doe', lastModified: '08 May 2026' },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return 'bg-success-text';
-      case 'Inactive': return 'bg-error-text';
-      case 'Draft': return 'bg-text-muted';
-      default: return 'bg-border-strong';
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Active': return <Badge variant="success" className="uppercase tracking-widest text-[9px] font-bold">Active</Badge>;
-      case 'Inactive': return <Badge variant="error" className="uppercase tracking-widest text-[9px] font-bold">Inactive</Badge>;
-      case 'Draft': return <Badge variant="neutral" className="uppercase tracking-widest text-[9px] font-bold">Draft</Badge>;
-      default: return null;
-    }
-  };
-
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-full">
       <div className="p-8 max-w-[1600px] mx-auto w-full space-y-6">
         
         {/* Header */}
@@ -47,7 +29,7 @@ export default function Workflows({ onNavigate }: { onNavigate: (page: Page) => 
               </button>
               <h1 className="text-xl font-semibold text-text-primary tracking-tight">Workflow Automation</h1>
             </div>
-            <p className="text-sm text-text-secondary pl-6">Set up intelligent ticket routing, automated responses, and SLA triggers.</p>
+            <p className="text-sm text-text-secondary pl-6">Set up intelligent ticket routing, automated responses, and SLA triggers visually.</p>
           </div>
           <Button variant="primary" icon={Plus} onClick={() => onNavigate('edit_workflow')}>
             New Workflow
@@ -83,41 +65,71 @@ export default function Workflows({ onNavigate }: { onNavigate: (page: Page) => 
           </div>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {workflows.map((wf, idx) => (
-            <div key={idx} role="button" tabIndex={0} onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('edit_workflow'); } }} className="card-base flex flex-col relative overflow-hidden group hover:border-border-strong transition-all h-[240px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" onClick={() => onNavigate('edit_workflow')}>
-              <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusColor(wf.status)}`}></div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2 gap-2">
-                  <h3 className="font-semibold text-text-primary text-[15px] truncate group-hover:text-brand-500 transition-colors">{wf.name}</h3>
-                  {getStatusBadge(wf.status)}
-                </div>
-                
-                <p className="text-sm text-text-secondary line-clamp-2 leading-relaxed mb-4">
-                  {wf.description}
-                </p>
-                
-                <div className="mt-auto flex items-end justify-between">
-                  <div>
-                    <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-0.5">Executions</div>
-                    <div className="text-2xl font-bold text-text-primary font-mono tracking-tight">{wf.executions.toLocaleString()}</div>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-bg-page border border-border-default flex items-center justify-center text-text-muted shadow-sm group-hover:bg-bg-surface-active group-hover:text-text-primary transition-colors">
-                    <Activity size={14} />
-                  </div>
-                </div>
+        {/* List View */}
+        <div className="bg-bg-surface border border-border-default rounded-lg overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm min-w-[900px]">
+            <thead>
+              <tr className="bg-bg-page border-b border-border-default">
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider">Workflow Name</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider w-24">Status</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider">Trigger</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider text-right">Executions</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider">Created</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider">Last Modified</th>
+                <th className="py-3 px-4 font-bold text-text-muted text-xs uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workflows.map((wf, idx) => (
+                <tr key={idx} className="border-b border-border-subtle hover:bg-bg-page transition-colors group">
+                  <td className="py-3 px-4">
+                    <button onClick={() => onNavigate('edit_workflow')} className="font-semibold text-text-primary hover:text-brand-600 transition-colors">
+                      {wf.name}
+                    </button>
+                  </td>
+                  <td className="py-3 px-4">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" checked={wf.status === 'Active'} readOnly />
+                      <div className="w-9 h-5 bg-border-strong rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-default after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-success-text"></div>
+                    </label>
+                  </td>
+                  <td className="py-3 px-4 text-text-secondary">{wf.trigger}</td>
+                  <td className="py-3 px-4 text-right font-mono text-text-primary font-medium">{wf.executions.toLocaleString()}</td>
+                  <td className="py-3 px-4 text-text-secondary text-xs">
+                    <div>{wf.createdOn}</div>
+                    <div className="text-[10px] text-text-muted mt-0.5">by {wf.createdBy}</div>
+                  </td>
+                  <td className="py-3 px-4 text-text-secondary text-xs">{wf.lastModified}</td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => onNavigate('edit_workflow')} className="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-surface-hover rounded" title="Edit">
+                        <Edit size={16} />
+                      </button>
+                      <button className="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-surface-hover rounded" title="Clone">
+                        <Copy size={16} />
+                      </button>
+                      <button className="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-surface-hover rounded" title="Export Reports">
+                        <Download size={16} />
+                      </button>
+                      <button className="p-1.5 text-text-muted hover:text-error-text hover:bg-error-bg rounded" title="Delete">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {workflows.length === 0 && (
+            <div className="p-12 text-center flex flex-col items-center">
+              <div className="w-16 h-16 bg-bg-page rounded-full flex items-center justify-center text-text-muted mb-4 border border-border-default">
+                <Activity size={24} />
               </div>
-              <div className="px-5 py-3 border-t border-border-default bg-bg-page flex justify-between items-center text-xs">
-                <span className="text-text-secondary font-medium">
-                  Created: <span className="text-text-primary font-mono">{wf.createdOn}</span>
-                </span>
-                <button className="text-text-muted hover:text-text-primary transition-colors focus:outline-none" onClick={(e) => { e.stopPropagation(); }}>
-                  <MoreHorizontal size={16} />
-                </button>
-              </div>
+              <h3 className="text-lg font-semibold text-text-primary mb-1">No workflows yet</h3>
+              <p className="text-text-secondary text-sm mb-6 max-w-sm">Automate your support process by building rules to resolve common issues automatically.</p>
+              <Button variant="primary" icon={Plus} onClick={() => onNavigate('edit_workflow')}>Create New Workflow</Button>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

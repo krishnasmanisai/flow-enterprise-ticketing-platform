@@ -1,4 +1,4 @@
-import { Settings as SettingsIcon, BarChart2, SlidersHorizontal, Wand2, ArrowRight, Users, FolderGit2, FileBox, LayoutTemplate, Library, Database, Files, Network } from 'lucide-react';
+import { Settings as SettingsIcon, BarChart2, SlidersHorizontal, Wand2, ArrowRight, Users, UserCheck, FolderGit2, FileBox, LayoutTemplate, Library, Database, Files, Network } from 'lucide-react';
 import { Page } from '../types';
 
 export default function Settings({ onNavigate }: { onNavigate: (page: Page) => void }) {
@@ -74,6 +74,13 @@ export default function Settings({ onNavigate }: { onNavigate: (page: Page) => v
           label: 'Internal Users', 
           description: 'Manage internal users, reporting hierarchy, business units, roles, and permissions.', 
           path: 'internal_users',
+          iconColor: 'text-text-primary'
+        },
+        { 
+          icon: UserCheck, 
+          label: 'Client Users', 
+          description: 'Manage client users, organization assignments, tenant business units, and roles.', 
+          path: 'client_users',
           iconColor: 'text-text-primary'
         },
       ]

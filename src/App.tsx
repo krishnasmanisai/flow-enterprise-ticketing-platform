@@ -31,7 +31,10 @@ import { FloatingDialer } from './components/FloatingDialer';
 import Dashboard from './pages/Dashboard';
 import TeamManagement from './pages/TeamManagement';
 import InternalUsers from './pages/InternalUsers';
+import ClientUsers from './pages/ClientUsers';
 import ProjectConfiguration from './pages/ProjectConfiguration';
+
+import { NotificationBell } from './components/notifications/NotificationBell';
 
 function AppLayout() {
   const location = useLocation();
@@ -52,17 +55,21 @@ function AppLayout() {
     <div className="flex h-screen overflow-hidden bg-bg-page text-text-primary">
       <Sidebar currentPage={currentPath as Page} onNavigate={(p) => { navigate(p.startsWith('/') ? p : `/${p}`); setIsMobileMenuOpen(false); }} isMobileOpen={isMobileMenuOpen} onMobileClose={() => setIsMobileMenuOpen(false)} />
       <div className="flex-1 flex flex-col h-full min-w-0 relative">
-        <div className="md:hidden h-14 flex items-center justify-between px-4 border-b border-border-default bg-bg-surface shrink-0">
+        <header className="h-14 flex items-center justify-between px-4 border-b border-border-default bg-bg-surface shrink-0">
           <div className="flex items-center gap-2">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 text-text-secondary hover:text-text-primary rounded-md">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary rounded-md">
               <Menu size={20} />
             </button>
-            <div className="font-sans text-sm font-semibold text-text-primary">FLOW</div>
+            <div className="md:hidden font-sans text-sm font-semibold text-text-primary">FLOW</div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center shrink-0 text-bg-surface font-semibold text-xs shadow-sm">
-            MS
+          
+          <div className="flex items-center gap-4 ml-auto">
+            <NotificationBell />
+            <div className="md:hidden w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center shrink-0 text-bg-surface font-semibold text-xs shadow-sm">
+              MS
+            </div>
           </div>
-        </div>
+        </header>
         <main className="flex-1 overflow-y-auto bg-bg-page relative">
           <Routes>
             <Route path="/dashboard" element={<Dashboard onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
@@ -89,6 +96,7 @@ function AppLayout() {
             <Route path="/edit_workflow" element={<EditWorkflow onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/team_management" element={<TeamManagement onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/internal_users" element={<InternalUsers onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
+            <Route path="/client_users" element={<ClientUsers onNavigate={(p) => navigate(p.startsWith('/') ? p : `/${p}`)} />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FolderOpen, ChevronLeft, Send, Paperclip, MoreHorizontal, User, Clock, Link as LinkIcon, 
   Activity, CheckSquare, History, FileText, Image as ImageIcon, Download, 
-  Lock, Mail, Phone, Building, Briefcase, Info, CheckCircle2, Shield, Globe, Plus
-} from 'lucide-react';
+  Lock, Mail, Phone, Building, Briefcase, Info, CheckCircle2, Shield, Globe, Plus, ArrowUpRight } from 'lucide-react';
 import { Page } from '../types';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -13,62 +12,111 @@ import { RichTextEditor } from '../components/ui/RichTextEditor';
 import { LogTimeModal, TimeLogEntry } from '../components/ticket/LogTimeModal';
 import { LinkTicketModal } from '../components/LinkTicketModal';
 import { CreateTicketFlow } from './CreateTicketFlow';
+import { CallAssistQuickActions } from '../components/ticket/CallAssistQuickActions';
 import { Copy } from 'lucide-react';
+import { CommentThread, CommentType } from '../components/comments/CommentThread';
 
 // Mock modals
 const TicketHistoryModal = ({ onClose }: any) => null;
 
 const ReassignModal = ({ onClose }: any) => null;
 
-export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page) => void }) {
+export interface TicketDetailsProps {
+  onNavigate: (page: Page) => void;
+  ticketId?: string;
+  embedded?: boolean;
+}
+
+export default function TicketDetails({ onNavigate, ticketId: propTicketId, embedded = false }: TicketDetailsProps) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const ticketId = searchParams.get('id') || 'TKT-1088';
+  const ticketId = propTicketId || searchParams.get('id') || 'TKT-1088';
+  const isDemoCall = ticketId === '10-07';
+  
   const [activeTab, setActiveTab] = useState<'reply' | 'internal'>('reply');
   const [activeBottomTab, setActiveBottomTab] = useState<'activity' | 'sla' | 'tasks' | 'linked' | 'history' | 'attachments'>('attachments');
   const [replyContent, setReplyContent] = useState('');
   
   const [status, setStatus] = useState('Open');
   const userRole = 'edit'; // Mock user role
+  const isCallCenterUser = true; // Assume true for demo
+  
   const [priority, setPriority] = useState('Critical');
   const [assignee, setAssignee] = useState('John Doe');
 
-    const isEmail = ticketId === 'TKT-1088' || ticketId === 'TKT-1070';
-  const initialSource = isEmail ? 'EMAIL' : 'PORTAL';
-  const [ticketSource, setTicketSource] = useState<'EMAIL' | 'PORTAL' | 'API'>(initialSource);
-  const customerName = isEmail ? 'Sarah Connor' : 'Bob S.';
-  const customerInitials = isEmail ? 'SC' : 'BS';
-  const customerEmail = isEmail ? 'sarah.connor@acmecorp.com' : 'bob.s@globex.com';
-  const customerCompany = isEmail ? 'Acme Corp' : 'Globex';
-  const customerPhone = isEmail ? '+1 555-0198' : '+1 555-9921';
-  const customerBU = isEmail ? 'IT Operations' : 'DevOps';
+  const isEmail = ticketId === 'TKT-1088' || ticketId === 'TKT-1070';
+  const isTKT1024 = ticketId === 'TKT-1024';
+  const isTKT1085 = ticketId === 'TKT-1085';
+  const initialSource = isDemoCall ? 'CALL' : isEmail ? 'EMAIL' : 'PORTAL';
+  const [ticketSource, setTicketSource] = useState<'EMAIL' | 'PORTAL' | 'API' | 'CALL'>(initialSource as any);
   
-  const originalRequestTime = isEmail ? 'Oct 24, 08:00 AM UTC' : 'Oct 24, 08:15 AM UTC';
-  const originalRequestSubject = isEmail ? 'Users unable to authenticate in APAC region' : 'Login API returning 500';
-  const originalRequestBody = isEmail 
+  // Ticket Type: Internal or External
+  const isInitialInternal = ticketId === 'TKT-1088' || ticketId === 'TKT-1070' || ticketId === 'TKT-1058' || ticketId === 'TKT-1051';
+  const [ticketType, setTicketType] = useState<'internal' | 'external'>(isInitialInternal ? 'internal' : 'external');
+  const [showTypeTooltip, setShowTypeTooltip] = useState(false);
+
+  useEffect(() => {
+    const isInt = ticketId === 'TKT-1088' || ticketId === 'TKT-1070' || ticketId === 'TKT-1058' || ticketId === 'TKT-1051';
+    setTicketType(isInt ? 'internal' : 'external');
+  }, [ticketId]);
+
+  const customerName = isDemoCall ? 'Sarah Connor' : isTKT1024 ? 'Alex Morgan' : isTKT1085 ? 'Bob S.' : isEmail ? 'Alice B.' : 'Bob S.';
+  const customerInitials = isDemoCall ? 'SC' : isTKT1024 ? 'AM' : isTKT1085 ? 'BS' : isEmail ? 'AB' : 'BS';
+  const customerEmail = isDemoCall ? 'sarah.connor@acmecorp.com' : isTKT1024 ? 'alex.morgan@retailpay.io' : isTKT1085 ? 'bob.s@globex.com' : isEmail ? 'alice.b@acmecorp.com' : 'bob.s@globex.com';
+  const customerCompany = isDemoCall ? 'Acme Corp' : isTKT1024 ? 'RetailPay Global' : isTKT1085 ? 'Globex' : isEmail ? 'Acme Corp' : 'Globex';
+  const customerPhone = isDemoCall ? '+91 98765 43210' : isTKT1024 ? '+1 415-555-0133' : isTKT1085 ? '+1 555-9921' : isEmail ? '+1 555-0198' : '+1 555-9921';
+  const customerBU = isDemoCall ? 'Retail' : isTKT1024 ? 'Payment Systems' : isTKT1085 ? 'DevOps' : isEmail ? 'IT Operations' : 'DevOps';
+  
+  const originalRequestTime = isDemoCall ? 'Aug 16, 10:31 AM UTC' : isTKT1024 ? 'Oct 24, 07:45 AM UTC' : isTKT1085 ? 'Oct 24, 08:15 AM UTC' : isEmail ? 'Oct 24, 08:00 AM UTC' : 'Oct 24, 08:15 AM UTC';
+  const ticketCreatedDisplay = isDemoCall ? 'Aug 16, 10:31 AM' : isTKT1085 ? 'Oct 24, 08:15 AM' : isEmail ? 'Oct 24, 08:00 AM' : 'Oct 24, 08:15 AM';
+  const ticketAgeDisplay = isDemoCall ? '1h 30m' : isTKT1085 ? '3h 30m' : '2h 45m';
+
+  const originalRequestSubject = isDemoCall 
+    ? 'Inbound Customer Call - Sarah Connor' 
+    : isTKT1024 
+    ? 'Payment gateway failing for premium users' 
+    : isTKT1085
+    ? 'Login API returning 500'
+    : isEmail 
+    ? 'Users unable to authenticate in APAC region' 
+    : 'Login API returning 500';
+  const originalRequestBody = isDemoCall
+    ? 'Incoming call from +91 98765 43210. Customer needs assistance with loyalty points and recent coupons.'
+    : isTKT1024
+    ? 'High-priority alert: Multiple checkout failures reported on prod payment gateway. Customers on premium checkout flows are receiving 429 rate limit errors followed by 500 failures. This requires urgent infrastructure remediation.'
+    : isTKT1085
+    ? 'I am getting a 500 error every time I try to hit the /v2/login endpoint. It worked fine yesterday. See attached trace.'
+    : isEmail 
     ? 'Users from the APAC region (specifically Japan and Singapore) are reporting timeouts when attempting to log in via SSO. The error logs show 500 Internal Server Errors originating from the Auth Gateway. Started around 08:00 AM UTC. Please help ASAP.'
     : 'I am getting a 500 error every time I try to hit the /v2/login endpoint. It worked fine yesterday. See attached trace.';
 
   
   useEffect(() => {
-    setTicketSource(isEmail ? 'EMAIL' : 'PORTAL');
-  }, [ticketId]);
+    setTicketSource(isDemoCall ? 'CALL' : isEmail ? 'EMAIL' : 'PORTAL');
+  }, [ticketId, isDemoCall, isEmail]);
+  
+  const isCallAssistEligible = ticketSource === 'CALL' && isCallCenterUser;
 
-
-  const [emailTo, setEmailTo] = useState('{customerEmail}');
+  const [emailTo, setEmailTo] = useState(customerEmail);
   const [emailCc, setEmailCc] = useState('');
   const [emailBcc, setEmailBcc] = useState('');
-  const [emailSubject, setEmailSubject] = useState('Re: {originalRequestSubject}');
+  const [emailSubject, setEmailSubject] = useState(`Re: ${originalRequestSubject}`);
 
-    const [ticketFields, setTicketFields] = useState([
-    { id: 'f1', label: 'Project', type: 'select', value: 'Customer Support', options: ['Customer Support', 'IT Ops', 'HR'] },
+  const [ticketFields, setTicketFields] = useState([
+    { id: 'f0', label: 'Ticket Type', type: 'select', value: isInitialInternal ? 'Internal' : 'External', options: ['Internal', 'External'] },
+    { id: 'f1', label: 'Project', type: 'select', value: isEmail ? 'Internal IT' : 'Customer Support', options: ['Customer Support', 'IT Ops', 'Internal IT', 'HR', 'DevOps'] },
     { id: 'f2', label: 'Request Type', type: 'select', value: 'Incident', options: ['Incident', 'Service Request', 'Question'] },
     { id: 'f3', label: 'Service Type', type: 'select', value: 'Authentication', options: ['Authentication', 'Billing', 'Access'] },
-    { id: 'f4', label: 'Brand', type: 'text', value: '{customerCompany}' },
+    { id: 'f4', label: 'Brand', type: 'text', value: customerCompany },
     { id: 'f5', label: 'Loyalty Program', type: 'select', value: 'Platinum', options: ['Platinum', 'Gold', 'Silver', 'None'] },
     { id: 'f6', label: 'Store / Store Code', type: 'text', value: 'Online (ONL-1)' },
     { id: 'f7', label: 'Affected Regions', type: 'textarea', value: 'APAC (Japan, Singapore)' },
   ]);
+
+  // Keep ticketFields synced with ticketType
+  useEffect(() => {
+    setTicketFields(prev => prev.map(f => f.id === 'f0' ? { ...f, value: ticketType === 'internal' ? 'Internal' : 'External' } : f));
+  }, [ticketType]);
 
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isChangeProjectModalOpen, setIsChangeProjectModalOpen] = useState(false);
@@ -96,40 +144,52 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
     setTimeout(() => setShowToast(false), 3000);
   };
 
+  const handleLogCallActivity = (activity: any) => {
+    const newEntry: TimeLogEntry = {
+      id: Math.random().toString(),
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      time: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      user: 'John Doe', // Current user
+      hours: 0,
+      minutes: 0,
+      comment: `<div class="font-bold text-brand-600 mb-1">${activity.type}</div><div class="whitespace-pre-wrap">${activity.details}</div>`
+    };
+    setTimeLogEntries(prev => [newEntry, ...prev]);
+    // Also add to generic ticket history or switch active tab to activity to show the user
+    setActiveBottomTab('activity');
+  };
 
-  const messagesEmail = [
-    { sender: 'System', type: 'system', content: 'Ticket SLA breached for First Response.', time: 'Oct 24, 09:45 AM', isCustomer: false },
-    { sender: 'John Doe', type: 'internal', content: 'Checking the logs now. Looks like a DB connection pool issue in the apac-1 cluster.', time: 'Oct 24, 08:45 AM', isCustomer: false, role: 'Support Agent' },
-    { sender: 'Jane Smith', type: 'public', content: `Hi Sarah,\n\nWe are looking into the authentication issue affecting the APAC region. Our engineering team is currently investigating the gateway timeouts.\n\nWe will keep you updated.`, time: 'Oct 24, 08:30 AM', isCustomer: false, role: 'Support Lead', emailDetails: { to: '{customerEmail}', cc: '', subject: 'Re: {originalRequestSubject}' } },
-    { sender: '{customerName}', type: 'customer', content: 'Thank you. Please let me know as soon as it is resolved, our users are completely blocked.', time: 'Oct 24, 08:35 AM', isCustomer: true, role: 'Customer', emailDetails: { to: 'support@flow.com', cc: '', subject: 'Re: {originalRequestSubject}' } },
-  ];
-
-  const messagesPortal = [
-    { sender: 'Bob S.', type: 'customer', content: 'I am getting a 500 error every time I try to hit the /v2/login endpoint. It worked fine yesterday.', time: 'Oct 24, 08:15 AM', isCustomer: true, role: 'Customer', attachments: [{name: 'error_trace.log', size: '24 KB'}] },
-    { sender: 'System', type: 'system', content: 'Ticket SLA assigned: Gold Tier SLA (4h resolution)', time: 'Oct 24, 08:16 AM', isCustomer: false },
-    { sender: 'System', type: 'internal', content: 'Auto-assigned to DevOps queue based on routing rules.', time: 'Oct 24, 08:18 AM', isCustomer: false },
-    { sender: 'Alice Agent', type: 'internal', content: 'Checked Datadog. Seeing spikes in latency. Might be related to the recent deploy.', time: 'Oct 24, 08:30 AM', isCustomer: false, role: 'DevOps' },
-    { sender: 'Alice Agent', type: 'public', content: 'Hi Bob, we are looking into this right now. Our monitoring shows some elevated error rates on that endpoint. We expect a fix shortly.', time: 'Oct 24, 08:35 AM', isCustomer: false, role: 'DevOps' },
-    { sender: 'Bob S.', type: 'customer', content: 'Thanks Alice! Also I noticed it mostly happens on the mobile app.', time: 'Oct 24, 08:40 AM', isCustomer: true, role: 'Customer' },
-    { sender: 'Alice Agent', type: 'public', content: 'Got it, thanks for the additional detail. That helps us narrow it down.', time: 'Oct 24, 08:45 AM', isCustomer: false, role: 'DevOps' }
-  ];
-
-  const messages = isEmail ? messagesEmail : messagesPortal;
+  const [messages, setMessages] = useState<CommentType[]>(isEmail ? [
+    { id: '1', sender: 'System', type: 'system', content: 'Ticket SLA breached for First Response.', time: 'Oct 24, 09:45 AM', parentId: null },
+    { id: '2', sender: 'John Doe', type: 'internal', content: 'Checking the logs now. Looks like a DB connection pool issue in the apac-1 cluster.', time: 'Oct 24, 08:45 AM', role: 'Support Agent', parentId: null },
+    { id: '3', sender: 'Jane Smith', type: 'public', content: `Hi ${customerName.split(' ')[0]},\n\nWe are looking into the authentication issue affecting the APAC region. Our engineering team is currently investigating the gateway timeouts.\n\nWe will keep you updated.`, time: 'Oct 24, 08:30 AM', role: 'Support Lead', emailDetails: { to: customerEmail, cc: '', subject: `Re: ${originalRequestSubject}` }, parentId: null },
+    { id: '4', sender: customerName, type: 'customer', content: 'Thank you. Please let me know as soon as it is resolved, our users are completely blocked.', time: 'Oct 24, 08:35 AM', role: 'Customer', emailDetails: { to: 'support@flow.com', cc: '', subject: `Re: ${originalRequestSubject}` }, parentId: '3' },
+  ] : [
+    { id: '1', sender: 'Bob S.', type: 'customer', content: 'I am getting a 500 error every time I try to hit the /v2/login endpoint. It worked fine yesterday.', time: 'Oct 24, 08:15 AM', role: 'Customer', attachments: [{name: 'error_trace.log', size: '24 KB'}], parentId: null },
+    { id: '2', sender: 'System', type: 'system', content: 'Ticket SLA assigned: Gold Tier SLA (4h resolution)', time: 'Oct 24, 08:16 AM', parentId: null },
+    { id: '3', sender: 'System', type: 'internal', content: 'Auto-assigned to DevOps queue based on routing rules.', time: 'Oct 24, 08:18 AM', parentId: null },
+    { id: '4', sender: 'Alice Agent', type: 'internal', content: 'Checked Datadog. Seeing spikes in latency. Might be related to the recent deploy.', time: 'Oct 24, 08:30 AM', role: 'DevOps', parentId: null },
+    { id: '5', sender: 'Alice Agent', type: 'public', content: 'Hi Bob, we are looking into this right now. Our monitoring shows some elevated error rates on that endpoint. We expect a fix shortly.', time: 'Oct 24, 08:35 AM', role: 'DevOps', parentId: '1' },
+    { id: '6', sender: 'Bob S.', type: 'customer', content: 'Thanks Alice! Also I noticed it mostly happens on the mobile app.', time: 'Oct 24, 08:40 AM', role: 'Customer', parentId: '1' },
+    { id: '7', sender: 'Alice Agent', type: 'public', content: 'Got it, thanks for the additional detail. That helps us narrow it down.', time: 'Oct 24, 08:45 AM', role: 'DevOps', parentId: '1' }
+  ]);
 
   return (
     <div className="flex flex-col bg-bg-page min-h-screen pb-12">
       {/* 1. Sticky Ticket Header */}
-      <div className="bg-bg-surface border-b border-border-default sticky top-0 z-30 px-6 py-4 shadow-sm flex flex-col gap-4">
+      <div className={`bg-bg-surface border-b border-border-default ${embedded ? 'static' : 'sticky top-0 z-30'} px-6 py-4 shadow-sm flex flex-col gap-4`}>
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1">
-            <Button variant="ghost" size="icon" onClick={() => onNavigate('my_tickets')} className="text-text-secondary hover:bg-bg-surface-hover -ml-2 shrink-0 mt-0.5">
-              <ChevronLeft size={20} />
-            </Button>
+            {!embedded && (
+              <Button variant="ghost" size="icon" onClick={() => onNavigate('my_tickets')} className="text-text-secondary hover:bg-bg-surface-hover -ml-2 shrink-0 mt-0.5">
+                <ChevronLeft size={20} />
+              </Button>
+            )}
             <div className="flex flex-col gap-1.5 flex-1">
               <div className="flex flex-wrap items-center gap-3">
                 <CopyId id={ticketId} type="ticket" className="text-sm font-bold text-text-primary" />
                 <Badge variant="error" className="py-0.5 px-2 text-[10px] font-bold tracking-wide uppercase">SLA Breached</Badge>
-                <div className="flex items-center gap-2 text-[12px] text-text-muted font-mono ml-1">
+                <div className="flex flex-wrap items-center gap-2 text-[12px] text-text-muted font-mono ml-1">
                   <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-bg-surface border border-border-default text-text-primary text-[10px] font-bold uppercase tracking-wider shadow-sm">
                     {ticketSource === 'EMAIL' ? <Mail size={12}/> : <Globe size={12}/>} 
                     {ticketSource}
@@ -137,9 +197,60 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
                   <span>•</span>
                   <span>{customerCompany}</span>
                   <span>•</span>
-                  <span>Created: Oct 24, 08:00 AM</span>
+                  <span>Created: {ticketCreatedDisplay}</span>
                   <span>•</span>
-                  <span>Age: 2h 45m</span>
+                  <span>Age: {ticketAgeDisplay}</span>
+                  <span>•</span>
+                  <div className="flex items-center gap-1.5 font-sans">
+                    <span className="text-text-secondary font-medium text-[11px]">Ticket Type:</span>
+                    <span 
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-2xs transition-colors ${
+                        ticketType === 'internal'
+                          ? 'bg-amber-50 text-amber-900 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-900 border-emerald-200'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${ticketType === 'internal' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                      <span className="capitalize">{ticketType}</span>
+                      
+                      {/* 'i' icon with tooltip */}
+                      <div 
+                        className="relative group/typeinfo inline-flex items-center ml-0.5 cursor-help"
+                        onMouseEnter={() => setShowTypeTooltip(true)}
+                        onMouseLeave={() => setShowTypeTooltip(false)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowTypeTooltip(prev => !prev);
+                        }}
+                      >
+                        <button
+                          type="button"
+                          aria-label="Ticket visibility information"
+                          className="p-0.5 rounded-full hover:bg-black/5 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-colors cursor-pointer"
+                        >
+                          <Info 
+                            size={13} 
+                            className={ticketType === 'internal' ? 'text-amber-700' : 'text-emerald-700'} 
+                          />
+                        </button>
+
+                        {/* Tooltip */}
+                        <div 
+                          role="tooltip" 
+                          className={`absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 flex-col items-center pointer-events-none transition-all duration-150 ${
+                            showTypeTooltip ? 'flex' : 'hidden group-hover/typeinfo:flex'
+                          }`}
+                        >
+                          <div className="bg-slate-900 text-white text-[11px] font-medium px-2.5 py-1.5 rounded shadow-lg whitespace-nowrap leading-tight text-center">
+                            {ticketType === 'internal' 
+                              ? 'This ticket is only visible to internal users.' 
+                              : 'This ticket will be visible to client users as well.'}
+                          </div>
+                          <div className="w-2 h-2 bg-slate-900 rotate-45 -mt-1" />
+                        </div>
+                      </div>
+                    </span>
+                  </div>
                   {totalLoggedMinutes > 0 && (
                     <>
                       <span>•</span>
@@ -152,7 +263,47 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* Quick Demo Switcher between Internal (TKT-1088) and External (TKT-1085) */}
+            <div className="hidden sm:flex items-center gap-1.5 bg-bg-surface-alt px-2.5 py-1 rounded-md border border-border-default text-xs">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Demo Tickets:</span>
+              <button
+                type="button"
+                onClick={() => onNavigate('/ticket_details?id=TKT-1088')}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer ${
+                  ticketId === 'TKT-1088'
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300 font-bold shadow-2xs'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+                title="View Internal Ticket"
+              >
+                TKT-1088 (Internal)
+              </button>
+              <span className="text-border-default">|</span>
+              <button
+                type="button"
+                onClick={() => onNavigate('/ticket_details?id=TKT-1085')}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer ${
+                  ticketId === 'TKT-1085'
+                    ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold shadow-2xs'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+                title="View External Ticket"
+              >
+                TKT-1085 (External)
+              </button>
+            </div>
+            {embedded && (
+              <Button 
+                variant="primary" 
+                size="sm" 
+                icon={ArrowUpRight} 
+                onClick={() => onNavigate(`/ticket_details?id=${ticketId}`)} 
+                className="h-8 font-semibold shadow-sm"
+              >
+                Open Ticket
+              </Button>
+            )}
             <Button variant="secondary" size="sm" icon={Clock} onClick={() => setIsLogTimeModalOpen(true)} className="h-8 font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 border-brand-200">Log Time</Button>
             <div className="relative">
               <Button variant="outline" size="sm" icon={MoreHorizontal} className="h-8 font-semibold" onClick={() => setIsActionsMenuOpen(!isActionsMenuOpen)}>Actions</Button>
@@ -188,6 +339,15 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
         {/* Quick editable attributes in header */}
         <div className="flex flex-wrap items-center gap-6 pl-11">
           <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Type</span>
+            <SingleSearchDropdown 
+              options={['Internal', 'External']} 
+              value={ticketType === 'internal' ? 'Internal' : 'External'} 
+              onChange={(val) => setTicketType(val.toLowerCase() as 'internal' | 'external')} 
+              className="px-2 py-1 bg-transparent border-none hover:bg-bg-surface-hover rounded text-sm font-bold text-text-primary h-7 min-w-[105px] cursor-pointer"
+            />
+          </div>
+          <div className="flex items-center gap-2">
             <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Status</span>
             <SingleSearchDropdown 
               options={['Open', 'In Progress', 'Waiting for Customer', 'Resolved', 'Closed']} 
@@ -218,6 +378,10 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
       </div>
 
       <div className="p-6 max-w-[1400px] mx-auto w-full flex flex-col gap-6">
+        
+        {isCallAssistEligible && (
+          <CallAssistQuickActions customerMobile={customerPhone} onLogActivity={handleLogCallActivity} />
+        )}
         
         {/* 2. Unified Workspace Panel */}
         <div className="card-base p-0 overflow-hidden flex flex-col bg-bg-surface shadow-sm border border-border-default rounded-xl">
@@ -332,7 +496,12 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
                             <SingleSearchDropdown 
                               options={field.options || []} 
                               value={field.value} 
-                              onChange={(val) => setTicketFields(prev => prev.map(f => f.id === field.id ? { ...f, value: val } : f))} 
+                              onChange={(val) => {
+                                setTicketFields(prev => prev.map(f => f.id === field.id ? { ...f, value: val } : f));
+                                if (field.id === 'f0') {
+                                  setTicketType(val.toLowerCase() as 'internal' | 'external');
+                                }
+                              }} 
                               className="h-9 text-sm w-full input-base border border-border-default bg-bg-page focus-within:border-border-focus font-medium" 
                             />
                           ) : field.type === 'textarea' ? (
@@ -409,67 +578,24 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
 
         <div className="flex flex-col shadow-sm border border-border-default rounded-xl overflow-hidden">
         {/* 4. Conversation Workspace */}
-        <div className="flex flex-col bg-bg-surface">
-          {messages.map((msg, i) => {
-            const isCustomer = msg.type === 'customer';
-            const isInternal = msg.type === 'internal';
-            const isSystem = msg.type === 'system';
-            
-            return (
-              <div key={i} className={`card-base p-5 shadow-sm border transition-colors
-                ${isCustomer ? 'bg-bg-surface border-border-default' : 
-                  isInternal ? 'bg-[#fffdf7] dark:bg-warning-bg/10 border-warning-text/30' : 
-                  isSystem ? 'bg-bg-page border-border-subtle border-dashed shadow-none' : 
-                  'bg-brand-50/20 border-brand-500/30'}`}>
-                  
-                  <div className="flex items-start gap-3">
-                     <div className={`flex items-center justify-center w-8 h-8 rounded shrink-0 shadow-sm
-                        ${isCustomer ? 'bg-bg-page text-text-secondary border border-border-default' : 
-                          isInternal ? 'bg-warning-text text-white' : 
-                          isSystem ? 'bg-bg-surface-hover text-text-secondary' : 
-                          'bg-brand-500 text-white'}`}>
-                        {isCustomer ? <User size={14} /> : isInternal ? <Lock size={14}/> : isSystem ? <Info size={14}/> : <Shield size={14}/>}
-                     </div>
-
-                     <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-2">
-                              <span className={`font-bold text-[13px] ${isSystem ? 'text-text-secondary' : 'text-text-primary'}`}>{msg.sender}</span>
-                              {msg.role && <span className="text-[10px] uppercase tracking-wider text-text-muted font-bold">{msg.role}</span>}
-                              {isInternal && <Badge variant="warning" className="py-0.5 px-2 text-[9px] font-bold uppercase tracking-wider shadow-sm border border-warning-text/20">Internal Note</Badge>}
-                              {!isInternal && !isCustomer && !isSystem && <Badge variant="neutral" className="bg-brand-100 text-brand-700 border border-brand-500/20 py-0.5 px-2 text-[9px] font-bold uppercase tracking-wider shadow-sm">Public Reply</Badge>}
-                          </div>
-                          <span className="text-[11px] text-text-muted font-mono">{msg.time}</span>
-                        </div>
-                        
-                        {ticketSource === 'EMAIL' && !isInternal && !isSystem && (msg as any).emailDetails && (
-                          <div className="mt-3 mb-2 p-2.5 rounded-md text-[12px] text-text-secondary flex flex-col gap-1 border border-border-subtle bg-bg-page shadow-sm">
-                            <div className="flex items-start gap-2"><span className="w-12 font-bold text-text-muted shrink-0">To:</span><span className="truncate font-medium">{(msg as any).emailDetails.to}</span></div>
-                            {(msg as any).emailDetails.cc && <div className="flex items-start gap-2"><span className="w-12 font-bold text-text-muted shrink-0">CC:</span><span className="truncate font-medium">{(msg as any).emailDetails.cc}</span></div>}
-                            <div className="flex items-start gap-2"><span className="w-12 font-bold text-text-muted shrink-0">Subject:</span><span className="font-bold text-text-primary truncate">{(msg as any).emailDetails.subject}</span></div>
-                          </div>
-                        )}
-                        
-                        <div className={`text-[13px] leading-relaxed whitespace-pre-wrap mt-3 font-medium ${isSystem ? 'text-text-muted italic' : 'text-text-primary'}`}>
-                          {msg.content}
-                        </div>
-                        
-                        {(msg as any).attachments && (msg as any).attachments.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {(msg as any).attachments.map((att: any, idx: number) => (
-                               <div key={idx} className="flex items-center gap-2 border border-border-default rounded bg-bg-page px-2 py-1 cursor-pointer hover:border-border-strong transition-colors">
-                                 <Paperclip size={12} className="text-text-muted" />
-                                 <span className="text-[11px] font-medium text-text-primary">{att.name}</span>
-                                 <span className="text-[10px] font-mono text-text-muted">{att.size}</span>
-                               </div>
-                            ))}
-                          </div>
-                        )}
-                     </div>
-                  </div>
-              </div>
-            );
-          })}
+        <div className="flex flex-col bg-bg-surface p-4">
+           <CommentThread 
+             comments={messages as any}
+             onReply={(parentId, content) => {
+               const newMsg = {
+                  id: Date.now().toString(),
+                  sender: 'Support Agent',
+                  role: 'Support',
+                  type: 'public' as const,
+                  content,
+                  time: 'Just now',
+                  isAgent: true,
+                  parentId
+               };
+               setMessages(prev => [...prev, newMsg]);
+             }}
+             currentUser="Support Agent"
+           />
         </div>
 
         {/* 5. Reply Composer */}
@@ -535,6 +661,21 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
                   size="md" 
                   className={activeTab === 'internal' ? 'bg-warning-text hover:bg-warning-text/90 focus-visible:ring-warning-text border-transparent text-white font-bold shadow-sm' : 'font-bold shadow-sm'}
                   icon={Send}
+                  onClick={() => {
+                    if (!replyContent.trim()) return;
+                    const newMsg = {
+                      id: Date.now().toString(),
+                      sender: 'Support Agent',
+                      role: 'Support',
+                      type: activeTab === 'internal' ? 'internal' as const : 'public' as const,
+                      content: replyContent,
+                      time: 'Just now',
+                      isAgent: true,
+                      parentId: null
+                    };
+                    setMessages(prev => [...prev, newMsg]);
+                    setReplyContent('');
+                  }}
                 >
                   {activeTab === 'internal' ? 'Add Note' : 'Send Reply'}
                 </Button>
@@ -773,7 +914,10 @@ export default function TicketDetails({ onNavigate }: { onNavigate: (page: Page)
         summary: originalRequestSubject,
         description: 'Mock original description',
         businessUnit: 'IT',
-        subBusinessUnit: 'Support'
+        subBusinessUnit: 'Support',
+        attachments: [
+          { name: 'error_trace.log', size: '24 KB', type: 'LOG' }
+        ]
       }} onClose={() => setIsCloneTicketOpen(false)} />}
       {isLogTimeModalOpen && (
         <LogTimeModal 
